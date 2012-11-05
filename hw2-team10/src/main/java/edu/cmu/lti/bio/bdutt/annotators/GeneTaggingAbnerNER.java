@@ -13,7 +13,6 @@ import org.apache.uima.resource.ResourceInitializationException;
 import edu.cmu.lti.bio.bdutt.tools.PosTagNamedEntityRecognizer;
 import edu.cmu.lti.bio.bdutt.types.Gene;
 import edu.cmu.lti.bio.bdutt.types.SourceText;
-
 import abner.Tagger;
 
 public class GeneTaggingAbnerNER extends JCasAnnotator_ImplBase {

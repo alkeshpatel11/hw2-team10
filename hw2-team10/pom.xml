@@ -79,11 +79,6 @@
 			<version>3.6.1</version>
 		</dependency>
 		<dependency>
-			<groupId>abner</groupId>
-			<artifactId>abner</artifactId>
-			<version>1.5</version>			
-		</dependency>
-		<dependency>
 			<groupId>cc.mallet</groupId>
 			<artifactId>mallet</artifactId>
 			<version>2.0.7</version>
@@ -98,9 +93,16 @@
 			<artifactId>lingpipe</artifactId>
 			<version>4.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>abner</groupId>
+			<artifactId>abner</artifactId>
+			<version>1.5</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<scm>
 		<connection>scm:git:git@github.com:alkeshpatel11/hw1-alkeshku.git</connection>
 		<developerConnection>scm:git:git@github.com:alkeshpatel11/hw1-alkeshku.git</developerConnection>
 	</scm>
 </project>
+z
