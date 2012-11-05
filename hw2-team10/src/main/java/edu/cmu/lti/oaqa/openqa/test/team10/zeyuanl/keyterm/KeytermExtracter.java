@@ -1,4 +1,4 @@
-package edu.cmu.lti.oaqa.openqa.test.team10.bdutt.keyterm;
+package edu.cmu.lti.oaqa.openqa.test.team10.zeyuanl.keyterm;
 
 import java.util.List;
 

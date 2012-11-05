@@ -1,4 +1,4 @@
-package edu.cmu.lti.oaqa.openqa.passage;
+package edu.cmu.lti.oaqa.openqa.test.team10.zeyuanl.passage;
 
 import java.util.ArrayList;
 import java.util.List;

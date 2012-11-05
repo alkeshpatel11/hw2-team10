@@ -1,4 +1,4 @@
-package edu.cmu.lti.oaqa.openqa.retrieval;
+package edu.cmu.lti.oaqa.openqa.test.team10.zeyuanl.retrieval;
 
 import java.util.ArrayList;
 import java.util.List;
