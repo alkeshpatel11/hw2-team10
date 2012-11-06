@@ -1,0 +1,4 @@
+class: edu.cmu.lti.oaqa.openqa.test.team10.bdutt.keyterm.KeytermExtracter
+
+persistence-provider: |
+  inherit: ecd.default-log-persistence-provider
