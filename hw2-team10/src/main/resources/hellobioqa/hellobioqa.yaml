@@ -15,7 +15,8 @@ pipeline:
     name: keyterm-extractor
     options: |
       - inherit: hellobioqa.keyterm.bdutt-simple
-
+      #- inherit: hellobioqa.keyterm.alkesh-simple
+      
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist
     options: |
