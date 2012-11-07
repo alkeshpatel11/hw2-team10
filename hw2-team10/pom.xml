@@ -99,6 +99,26 @@
 			<version>1.5</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>heptag</groupId>
+			<artifactId>heptag</artifactId>
+			<version>0.01</version>
+		</dependency>
+		<dependency>
+			<groupId>junit-4.4</groupId>
+			<artifactId>junit-4.4</artifactId>
+			<version>0.01</version>
+		</dependency>
+		<dependency>
+			<groupId>medpost</groupId>
+			<artifactId>medpost</artifactId>
+			<version>0.01</version>
+		</dependency>
+		<dependency>
+			<groupId>mallet</groupId>
+			<artifactId>mallet</artifactId>
+			<version>0.01</version>
+		</dependency>
 	</dependencies>
 	<scm>
 		<connection>scm:git:git@github.com:alkeshpatel11/hw1-alkeshku.git</connection>

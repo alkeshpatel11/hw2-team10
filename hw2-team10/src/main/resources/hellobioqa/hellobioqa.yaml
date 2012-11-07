@@ -16,7 +16,7 @@ pipeline:
     options: |
       #- inherit: hellobioqa.keyterm.bdutt-simple
       #- inherit: hellobioqa.team10.keyterm.alkesh-simple
-      - inherit: hellobioqa.team10.keyterm.zeyuanl-simple
+      - inherit: hellobioqa.team10.keyterm.yifeih-simple
       
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist

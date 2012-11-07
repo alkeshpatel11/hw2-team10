@@ -7,6 +7,7 @@
 package edu.cmu.lti.bio.yifeih.tools.banner.tagging;
 
 import java.io.File;
+import edu.cmu.lti.bio.yifeih.tools.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

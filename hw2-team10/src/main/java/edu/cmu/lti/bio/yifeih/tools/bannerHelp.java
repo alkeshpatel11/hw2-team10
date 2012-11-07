@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.uima.resource.ResourceInitializationException;
 
+//import edu.cmu.lti.bio.yifeih.tools.banner.*;
 import edu.cmu.lti.bio.yifeih.tools.banner.*;
 import edu.cmu.lti.bio.yifeih.tools.banner.tagging.CRFTagger;
 import edu.cmu.lti.bio.yifeih.tools.banner.tokenization.Tokenizer;
@@ -24,7 +25,7 @@ import edu.cmu.lti.bio.yifeih.tools.banner.tokenization.Tokenizer;
 
 public class bannerHelp
 {
-  String propertiesFilename = "src/main/resources/data/banner.properties";
+  String propertiesFilename = "data/yifeih/banner.properties";
   static BannerProperties properties;
   static Tokenizer tokenizer;
   static CRFTagger tagger = null;
@@ -34,9 +35,7 @@ public class bannerHelp
       String modelFilename = text; // model.bin
       properties = BannerProperties.load(propertiesFilename);
       tokenizer = properties.getTokenizer();
-      try {
-        tagger = CRFTagger.load(new File(modelFilename), properties.getLemmatiser(), properties.getPosTagger());
-      } catch (ClassNotFoundException e) {; }
+      tagger = CRFTagger.load(new File(modelFilename), properties.getLemmatiser(), properties.getPosTagger());
     }
   }
       

@@ -1,0 +1,6 @@
+class: edu.cmu.lti.oaqa.openqa.test.team10.yifeih.keyterm.KeytermExtracter
+hmmPath: data//yifeih//ne-en-bio-genetag.HmmChunker
+bannerPath: data//yifeih//gene_model_v02.bin
+
+persistence-provider: |
+  inherit: ecd.default-log-persistence-provider
