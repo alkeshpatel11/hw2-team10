@@ -83,11 +83,11 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
 				// System.out.println("Annotated: "+geneTag.getGeneName()+"\t"+begin+"\t"+end);
 
 				ArrayList<GeneCount> relatedGenes = new ArrayList<GeneCount>();
-				try {
+				/*try {
 					relatedGenes = searcher.searchIndex(geneName, MAX_RESULTS);
 				} catch (Exception e) {
 					e.printStackTrace();
-				}
+				}*/
 				if (relatedGenes.size() > 0) {
 					relatedGenes = findBestRelatedGenes(relatedGenes);
 				}
