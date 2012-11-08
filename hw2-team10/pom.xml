@@ -120,7 +120,7 @@
 		</dependency>
 	</dependencies>
 	<scm>
-		<connection>scm:git:git@github.com:alkeshpatel11/hw1-alkeshku.git</connection>
-		<developerConnection>scm:git:git@github.com:alkeshpatel11/hw1-alkeshku.git</developerConnection>
+		<connection>scm:git:git@github.com:alkeshpatel11/hw2-team10.git</connection>
+		<developerConnection>scm:git:git@github.com:alkeshpatel11/hw2-team10.git</developerConnection>
 	</scm>
 </project>
