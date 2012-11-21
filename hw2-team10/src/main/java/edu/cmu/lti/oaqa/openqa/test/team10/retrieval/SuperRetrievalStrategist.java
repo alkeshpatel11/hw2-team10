@@ -31,6 +31,7 @@ import edu.cmu.lti.oaqa.core.provider.solr.SolrWrapper;
 import edu.cmu.lti.oaqa.cse.basephase.retrieval.AbstractRetrievalStrategist;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
+import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -79,42 +80,68 @@ public class SuperRetrievalStrategist extends AbstractRetrievalStrategist {
   }
 
   @Override
-  protected final List<RetrievalResult> retrieveDocuments(String questionText,
+  protected List<RetrievalResult> retrieveDocuments(String questionText,
           List<Keyterm> keyterms) {
-    List<String> querys = formulateQuery(questionText, keyterms);
+    // use stemmed word to run the query
+    boolean dostem = true;
+
+    List<String> querys = formulateQuery(questionText, keyterms, dostem);
     return retrieveDocuments(querys);
   };
 
   /**
-   *  formulateQuery using graduate relaxation:
-   *  RS formulates an ordered sequence of queries, where the first query
-   *  is the narrowest or most specific query, and each successive query
-   *  is broader / less specific than the previous one
-   *  
+   * formulateQuery using graduate relaxation: RS formulates an ordered sequence of queries, where
+   * the first query is the narrowest or most specific query, and each successive query is broader /
+   * less specific than the previous one
+   * 
    * */
-  protected List<String> formulateQuery(String questionText, List<Keyterm> keyterms) {
+  protected List<String> formulateQuery(String questionText, List<Keyterm> keyterms, boolean dostem) {
     Annotation document = new Annotation(questionText);
     pipeline.annotate(document);
     List<CoreMap> sentences = document.get(SentencesAnnotation.class);
     List<String> usefulwords = new LinkedList<String>();
+    PorterStemmer stemmer = new PorterStemmer();
 
     // include NN, VB and ADJ
     for (CoreMap sentence : sentences) {
       for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
         String pos = token.get(PartOfSpeechAnnotation.class);
         if (pos.contains("NN") || pos.contains("VB") || pos.contains("JJ"))
-          usefulwords.add(token.value());
+          usefulwords.add(dostem ? stemmer.stem(token.value()) : token.value());
       }
     }
 
     List<String> querys = new LinkedList<String>();
 
+    // for keyword, include both stemmed word and original word
     StringBuffer result = new StringBuffer();
-    for (Keyterm keyterm : keyterms) {
-      result.append(keyterm.getText() + " AND ");
+    if (dostem) {
+      for (int i = 0; i < keyterms.size(); i++) {
+        if (i < keyterms.size() - 1) {
+          result.append(stemmer.stem(keyterms.get(i).getText()) + " AND ");
+          // mix
+//          result.append("("+stemmer.stem(keyterms.get(i).getText()) + " OR ");
+//          result.append(keyterms.get(i).getText() + "^2) AND ");
+        }
+        else {
+          result.append(stemmer.stem(keyterms.get(i).getText()));
+          // mix 
+//          result.append("("+stemmer.stem(keyterms.get(i).getText())+ " OR ");
+//          result.append(keyterms.get(i).getText() + "^2)");
+        }
+      }
+    }
+    else {
+      for (int i = 0; i < keyterms.size(); i++) {
+        if (i < keyterms.size() - 1)
+          result.append(keyterms.get(i).getText() + " AND ");
+        else
+          result.append(keyterms.get(i).getText());
+      }
     }
     // make sure key term is always included and boosted
     String qmain = "(" + result.toString() + ")^5 ";
+    // querys.add(qmain);
 
     for (int n = 0; n < usefulwords.size(); n++) {
       result = new StringBuffer();
@@ -122,39 +149,38 @@ public class SuperRetrievalStrategist extends AbstractRetrievalStrategist {
       for (int i = n; i < usefulwords.size(); i++) {
         result.append(" AND " + usefulwords.get(i));
       }
-      
+
       System.out.println(" QUERY: " + result.toString());
       querys.add(result.toString());
     }
-    
+
     return querys;
   }
 
   protected List<RetrievalResult> retrieveDocuments(List<String> querys) {
     List<RetrievalResult> result = new ArrayList<RetrievalResult>();
     List<String> idlist = new ArrayList<String>();
-    
+
     try {
       // ensure returned result lists size <= hitListSize
-      for(int i = 0; i < querys.size(); i++) {
+      for (int i = 0; i < querys.size(); i++) {
         String query = querys.get(i);
         SolrDocumentList docs = wrapper.runQuery(query, hitListSize);
         for (SolrDocument doc : docs) {
-          if(!idlist.contains((String)doc.getFieldValue("id")) && result.size() < hitListSize) {
-            idlist.add((String)doc.getFieldValue("id"));
+          if (!idlist.contains((String) doc.getFieldValue("id")) && result.size() < hitListSize) {
+            idlist.add((String) doc.getFieldValue("id"));
             RetrievalResult r = new RetrievalResult((String) doc.getFieldValue("id"),
                     (Float) doc.getFieldValue("score"), query);
             result.add(r);
             System.out.println(doc.getFieldValue("id"));
-          }
-          else if(result.size() >= hitListSize)
+          } else if (result.size() >= hitListSize)
             break;
         }
-        
-        if(result.size() >= hitListSize)
+
+        if (result.size() >= hitListSize)
           break;
       }
-      
+
     } catch (Exception e) {
       System.err.println("Error retrieving documents from Solr: " + e);
     }
