@@ -16,21 +16,22 @@
 
 package edu.cmu.lti.oaqa.openqa.test.team10.keyterm;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.uima.UimaContext;
-import org.apache.uima.jcas.cas.FSList;
 import org.apache.uima.resource.ResourceInitializationException;
 
-import edu.cmu.lti.bio.alkesh.annotators.POSTagAnnotator;
 import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 import edu.cmu.lti.bio.alkesh.genetrainer.NGramLuceneWrapper;
 import edu.cmu.lti.bio.alkesh.tools.PosTagNamedEntityRecognizer;
-import edu.cmu.lti.bio.alkesh.types.GeneTag;
-import edu.cmu.lti.bio.alkesh.types.GeneTagList;
+import edu.cmu.lti.oaqa.bio.resource_wrapper.obo.OBOGraph;
+import edu.cmu.lti.oaqa.bio.resource_wrapper.obo.OBONode;
 import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
@@ -107,11 +108,12 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
 		 * questionTokens.length; i++) { keyterms.add(new
 		 * Keyterm(questionTokens[i])); }
 		 */
+		findBestRelatedGenesq1(geneList);
 		for (int i = 0; i < geneList.size(); i++) {
 			keyterms.add(new Keyterm(removeEscapeChars(geneList.get(i).getGeneName())));
 			System.out.println("$$$$ "+geneList.get(i).getGeneName());
 		}
-
+		
 		return keyterms;
 	}
 
@@ -130,6 +132,35 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
 		}
 
 		return bestGenes;
+	}
+	
+	//Bharat 
+	
+	private void findBestRelatedGenesq1(ArrayList<GeneCount> genes)
+	{  
+	  
+	try {
+    OBOGraph graph = new OBOGraph(new FileReader(new File("./data/gene_ontology_ext.obo")));
+    //System.out.println(graph.toString());
+    //System.out.println("Genes array size = " + genes.size());
+    for(int i=0; i<genes.size(); i++)
+    {
+      System.out.println("Bharat = " + genes.get(i).getGeneName());
+      ArrayList<OBONode> oboNodes = graph.search(genes.get(i).getGeneName());
+      for(OBONode o: oboNodes)
+      {
+        System.out.println("BHARAT get names = " + o.getName());
+        for(String syn: o.getAllSynonyms())
+        {
+          System.out.println("BHARAT Synomyms= "+ syn);
+        }
+      }
+    }
+  } catch (FileNotFoundException e) {
+    // TODO Auto-generated catch block
+    e.printStackTrace();
+  }
+  
 	}
 	
 	private String removeEscapeChars(String keyterms){
