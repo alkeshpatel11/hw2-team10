@@ -27,6 +27,7 @@ import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.resource.ResourceInitializationException;
 
+import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 import edu.cmu.lti.oaqa.core.provider.solr.SolrWrapper;
 import edu.cmu.lti.oaqa.cse.basephase.retrieval.AbstractRetrievalStrategist;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
@@ -81,12 +82,16 @@ public class SuperRetrievalStrategist extends AbstractRetrievalStrategist {
   }
 
   @Override
-  protected List<RetrievalResult> retrieveDocuments(String questionText,
-          List<Keyterm> keyterms) {
+  protected List<RetrievalResult> retrieveDocuments(String questionText, List<Keyterm> keyterms) {
     // use stemmed word to run the query
-    boolean dostem = true;
+    boolean dostem = false;
 
-    List<String> querys = formulateQuery(questionText, keyterms, dostem);
+    List<String> querys = new ArrayList<String>();
+    try {
+      querys = formulateQuery(questionText, keyterms, dostem);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return retrieveDocuments(querys);
   };
 
@@ -95,8 +100,11 @@ public class SuperRetrievalStrategist extends AbstractRetrievalStrategist {
    * the first query is the narrowest or most specific query, and each successive query is broader /
    * less specific than the previous one
    * 
+   * @throws Exception
+   * 
    * */
-  protected List<String> formulateQuery(String questionText, List<Keyterm> keyterms, boolean dostem) {
+  protected List<String> formulateQuery(String questionText, List<Keyterm> keyterms, boolean dostem)
+          throws Exception {
     Annotation document = new Annotation(questionText);
     pipeline.annotate(document);
     List<CoreMap> sentences = document.get(SentencesAnnotation.class);
@@ -119,26 +127,47 @@ public class SuperRetrievalStrategist extends AbstractRetrievalStrategist {
     StringBuffer result = new StringBuffer();
     if (dostem) {
       for (int i = 0; i < keyterms.size(); i++) {
-        if (i < keyterms.size() - 1) {
-          result.append(stemmer.stem(keyterms.get(i).getText()) + " AND ");
-          // mix
-//          result.append("("+stemmer.stem(keyterms.get(i).getText()) + " OR ");
-//          result.append(keyterms.get(i).getText() + "^2) AND ");
+        String curkeyterm = keyterms.get(i).getText();
+        if(curkeyterm.split(" ").length > 1)
+          curkeyterm = "\"" + curkeyterm + "\"";
+        
+        // append synonym in query string
+        List<GeneCount> syns = synextrator.getSynonyms(keyterms.get(i).getText());
+        result.append("(" + stemmer.stem(curkeyterm));
+        for (int j = 0; j < syns.size(); j++) {
+          String cursyn = syns.get(j).getGeneName();
+          if (cursyn.matches(".*?\\s.*+"))
+            cursyn = "\"" + cursyn + "\"";
+
+          result.append(" OR " + cursyn);
         }
-        else {
-          result.append(stemmer.stem(keyterms.get(i).getText()));
-          // mix 
-//          result.append("("+stemmer.stem(keyterms.get(i).getText())+ " OR ");
-//          result.append(keyterms.get(i).getText() + "^2)");
+        result.append(")"); // TODO: boost by keyterm weight
+
+        if (i < keyterms.size() - 1) {
+          result.append(" AND ");
         }
       }
-    }
+    } 
     else {
       for (int i = 0; i < keyterms.size(); i++) {
+        String curkeyterm = keyterms.get(i).getText();
+        if(curkeyterm.length() > 1)
+          curkeyterm = "\"" + curkeyterm + "\"";
+        
+        // append synonym in query string
+        List<GeneCount> syns = synextrator.getSynonyms(keyterms.get(i).getText());
+        result.append("(" + curkeyterm);
+        for (int j = 0; j < syns.size(); j++) {
+          String cursyn = syns.get(j).getGeneName();
+          if (cursyn.matches(".*?\\s.*+"))
+            cursyn = "\"" + cursyn + "\"";
+
+          result.append(" OR " + cursyn);
+        }
+        result.append(")"); // TODO: boost by keyterm weight
+
         if (i < keyterms.size() - 1)
-          result.append(keyterms.get(i).getText() + " AND ");
-        else
-          result.append(keyterms.get(i).getText());
+          result.append(" AND ");
       }
     }
     // make sure key term is always included and boosted

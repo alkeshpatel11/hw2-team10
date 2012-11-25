@@ -27,10 +27,12 @@ import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.resource.ResourceInitializationException;
 
+import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 import edu.cmu.lti.oaqa.core.provider.solr.SolrWrapper;
 import edu.cmu.lti.oaqa.cse.basephase.retrieval.AbstractRetrievalStrategist;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
+import edu.cmu.lti.oaqa.openqa.test.team10.keyterm.SynonymExtractor;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -50,17 +52,25 @@ public class PhraseRetrievalStrategist extends SuperRetrievalStrategist {
 
   @Override
   protected List<RetrievalResult> retrieveDocuments(String questionText, List<Keyterm> keyterms) {
-    String query = formulateQuery(questionText, keyterms);
+    String query = "";
+    try {
+      query = formulateQuery(questionText, keyterms);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     return retrieveDocuments(query);
   }
 
   /**
    * formulateQuery: boosting the long phrase and using stemming
+   * @throws Exception 
    * 
    * */
-  protected String formulateQuery(String questionText, List<Keyterm> keyterms) {
+  protected String formulateQuery(String questionText, List<Keyterm> keyterms) throws Exception {
     StringBuffer result = new StringBuffer();
     PorterStemmer stemmer = new PorterStemmer();
+    SynonymExtractor synextrator = new SynonymExtractor();
 
     for (int i = 0; i < keyterms.size(); i++) {
       Keyterm keyterm = keyterms.get(i);
@@ -70,13 +80,24 @@ public class PhraseRetrievalStrategist extends SuperRetrievalStrategist {
         text = "\"" + text + "\"";
       String textstem = stemmer.stem(text);
       double weight = (keyterm.getProbability()-0.0)<1e-6 ? 1.0 : keyterm.getProbability();
-      int coef = text.length();
+      int coef = text.split(" ").length;
 
       String qs = String.format("(%s OR %s)^%f", text, textstem, coef * weight);
+      // append synonym in query string
+      List<GeneCount> syns = synextrator.getSynonyms(text);
+      result.append("(" + qs);
+      for (int j = 0; j < syns.size(); j++) {
+        String cursyn = syns.get(j).getGeneName();
+        if (cursyn.matches(".*?\\s.*+"))
+          cursyn = "\"" + cursyn + "\"";
+
+        result.append(" OR " + cursyn);
+      }
+      result.append(")"); // TODO: boost by keyterm weight
+      
+      
       if (i < keyterms.size() - 1)
-        result.append(qs + " AND ");
-      else
-        result.append(qs);
+        result.append(" AND ");
     }
 
     String query = result.toString();
