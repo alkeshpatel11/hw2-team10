@@ -108,12 +108,20 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
 		 * questionTokens.length; i++) { keyterms.add(new
 		 * Keyterm(questionTokens[i])); }
 		 */
-		findBestRelatedGenesq1(geneList);
+		//Finding synonyms from Gene Ontology
+		ArrayList<GeneCount> synFromGo = findBestRelatedGenesFromGO(geneList);		
+		
 		for (int i = 0; i < geneList.size(); i++) {
 			keyterms.add(new Keyterm(removeEscapeChars(geneList.get(i).getGeneName())));
 			System.out.println("$$$$ "+geneList.get(i).getGeneName());
 		}
 		
+		//Adding synonyms retreived from gene ontology to the keywords at a constant weight of 0.5
+		
+		for (int i = 0; i < synFromGo.size(); i++) {
+      keyterms.add(new Keyterm(removeEscapeChars(synFromGo.get(i).getGeneName())));
+      System.out.println("$$$$ FROM GO "+synFromGo.get(i).getGeneName());
+    }
 		return keyterms;
 	}
 
@@ -136,23 +144,25 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
 	
 	//Bharat 
 	
-	private void findBestRelatedGenesq1(ArrayList<GeneCount> genes)
+	private ArrayList<GeneCount> findBestRelatedGenesFromGO(ArrayList<GeneCount> genes)
 	{  
-	  
+	ArrayList<GeneCount> geneListToSend = new ArrayList<GeneCount>();
 	try {
     OBOGraph graph = new OBOGraph(new FileReader(new File("./data/gene_ontology_ext.obo")));
     //System.out.println(graph.toString());
-    //System.out.println("Genes array size = " + genes.size());
+    //System.out.println("Genes array size = " + genes.size());    
     for(int i=0; i<genes.size(); i++)
     {
-      System.out.println("Bharat = " + genes.get(i).getGeneName());
+      //System.out.println("Bharat = " + genes.get(i).getGeneName());
       ArrayList<OBONode> oboNodes = graph.search(genes.get(i).getGeneName());
       for(OBONode o: oboNodes)
       {
-        System.out.println("BHARAT get names = " + o.getName());
+        //System.out.println("BHARAT get names = " + o.getName());
+        
         for(String syn: o.getAllSynonyms())
         {
-          System.out.println("BHARAT Synomyms= "+ syn);
+          //System.out.println("BHARAT Synomyms= "+ syn);
+          geneListToSend.add(new GeneCount(syn, 0.5));
         }
       }
     }
@@ -161,6 +171,7 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
     e.printStackTrace();
   }
   
+	return geneListToSend;
 	}
 	
 	private String removeEscapeChars(String keyterms){
