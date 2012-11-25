@@ -37,7 +37,7 @@ public class LanguageModeling {
 
 	String XMI_REPOSITORY = "C:/Users/alkesh/Downloads/Trec06_annotated_xmi/";
 	String TYPE_DESC_XML = "src/main/resources/edu/cmu/lti/oaqa/bio/model/bioTypes.xml";
-	String SOLR_SERVER_URL = "http://localhost:8983/solr/genomics-simple/";
+	String SOLR_SERVER_URL = "http://localhost:8983/solr/genomics-legalspan/";
 
 	SolrWrapper solrWrapper = null;
 
@@ -65,10 +65,13 @@ public class LanguageModeling {
 
 	}
 
+	
+	
 	public void indexPassages() throws Exception {
 
 		File files[] = new File(XMI_REPOSITORY).listFiles();
 
+		IndexingUtils indexUtils=new IndexingUtils(solrWrapper.getServer());
 		XMLInputSource input = new XMLInputSource(TYPE_DESC_XML);
 		TypeSystemDescription typeDesc = UIMAFramework.getXMLParser()
 				.parseTypeSystemDescription(input);
@@ -117,9 +120,9 @@ public class LanguageModeling {
 			hshMap.put("text", docText);
 			hshMap.put("paragraph", paragraphs);
 			hshMap.put("timestamp", now);
-			SolrInputDocument solrDoc = solrWrapper.makeSolrDocument(hshMap);
+			SolrInputDocument solrDoc = indexUtils.makeSolrDocument(hshMap);
 			String docXML = ClientUtils.toXML(solrDoc);
-			solrWrapper.indexDocument(docXML);
+			indexUtils.indexDocument(docXML);
 			// System.out.println(docText);
 			// if (i % 50 == 0) {
 			solrWrapper.getServer().commit();

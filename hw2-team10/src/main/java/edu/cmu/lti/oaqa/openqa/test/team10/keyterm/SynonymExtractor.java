@@ -28,4 +28,16 @@ public class SynonymExtractor {
 		}
 		return selectedList;
 	}
+	
+	public static void main(String args[]){
+		try{
+			SynonymExtractor extractor=new SynonymExtractor();
+			ArrayList<GeneCount>list=extractor.getSynonyms("beta-amyloid precursor");
+			for(int i=0;i<list.size();i++){
+				System.out.println(list.get(i).getGeneName());
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

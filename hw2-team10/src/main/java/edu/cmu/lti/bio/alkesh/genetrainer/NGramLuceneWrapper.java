@@ -44,7 +44,7 @@ public class NGramLuceneWrapper {
 			NGramLuceneWrapper main = new NGramLuceneWrapper();
 			//main.createIndex();
 			ArrayList<GeneCount> geneList = main
-					.searchIndex("carbonic anhydrase",100);
+					.searchIndex("MMS2",100);
 			for(int i=0;i<geneList.size();i++){
 				System.out.println(geneList.get(i).getGeneName()+"\t"+geneList.get(i).getCount());
 			}

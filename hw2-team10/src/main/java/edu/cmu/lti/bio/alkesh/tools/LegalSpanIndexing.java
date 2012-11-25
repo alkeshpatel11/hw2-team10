@@ -1,6 +1,5 @@
 package edu.cmu.lti.bio.alkesh.tools;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -29,30 +28,28 @@ public class LegalSpanIndexing {
 
 	String XMI_REPOSITORY = "C:/Users/alkesh/Downloads/Trec06_annotated_xmi/";
 	String TYPE_DESC_XML = "src/main/resources/edu/cmu/lti/oaqa/bio/model/bioTypes.xml";
-	String SOLR_SERVER_URL = "http://localhost:8983/solr/genomics-simple/";
-
+	String SOLR_SERVER_URL = "http://localhost:8983/solr/genomics-legalspan/";
 
 	public LegalSpanIndexing() {
 		try {
-			//ResourceBundle res = ResourceBundle.getBundle(configFile);
-			//setConfig(res);
+			// ResourceBundle res = ResourceBundle.getBundle(configFile);
+			// setConfig(res);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-/*	private void setConfig(ResourceBundle res) {
-		this.XMI_REPOSITORY = res.getString("xmi.repository");
-		this.TYPE_DESC_XML = res.getString("uima.type.description");
-		this.SOLR_SERVER_URL = res.getString("solr.server.url");
-	}
-*/
+	/*
+	 * private void setConfig(ResourceBundle res) { this.XMI_REPOSITORY =
+	 * res.getString("xmi.repository"); this.TYPE_DESC_XML =
+	 * res.getString("uima.type.description"); this.SOLR_SERVER_URL =
+	 * res.getString("solr.server.url"); }
+	 */
 	public static void main(String args[]) {
 		SolrWrapper solrWrapper = null;
 
 		try {
 
-			
 			LegalSpanIndexing main = new LegalSpanIndexing();
 
 			File files[] = new File(main.XMI_REPOSITORY).listFiles();
@@ -65,10 +62,14 @@ public class LegalSpanIndexing {
 
 			CAS cas = CasCreationUtils.createCas(typeDesc, null,
 					new FsIndexDescription[0]);
-
+			boolean cont=false;
 			for (int i = 0; i < files.length; i++) {
 
-				if (i < 4) {
+				if (cont==false && files[i].getName().equals("12411320.xmi")) {
+					cont=true;
+					
+				}
+				if(!cont){
 					continue;
 				}
 
@@ -82,45 +83,40 @@ public class LegalSpanIndexing {
 				} finally {
 					inputStream.close();
 				}
+
 				String fileName = files[i].getName();
 				String id = fileName.replace(".xmi", "").trim();
-				
-				String htmlText = cas.getDocumentText();
-				
-				Iterator<AnnotationFS> it=cas.getAnnotationIndex().iterator();
-				ArrayList<String>paraList=new ArrayList<String>();
-				while(it.hasNext()){
-					AnnotationFS val=it.next();
-					
-					//val.getFeatureValueAsString(feat)
-					if(val.getType().getName().equals("edu.cmu.lti.bio.trec.LegalSpan")){
-						String paragraph=Jsoup.parse(val.getCoveredText()).text();
-						System.out.println();
-						System.out.println("------------------------------------------");
-						paraList.add(paragraph);						
-					}					
-				}
-				System.out.println("=====================================================");
-				String docText = Jsoup.parse(htmlText).text();
-				//System.out.println(docText);
-				Date now = new Date();
-				HashMap<String, Object> hshMap = new HashMap<String, Object>();
-				hshMap.put("id", id);
-				// hshMap.put("htmltext", htmlText);
-				hshMap.put("text", docText);
-				hshMap.put("paragraph", paraList);
-				hshMap.put("timestamp", now);
-				SolrInputDocument solrDoc = solrWrapper
-						.makeSolrDocument(hshMap);
-				String docXML = ClientUtils.toXML(solrDoc);
-				solrWrapper.indexDocument(docXML);
-				// System.out.println(docText);
-				// if (i % 50 == 0) {
-				solrWrapper.getServer().commit();
-				//Thread.sleep(1000);
-				// }
+				Iterator<AnnotationFS> it = cas.getAnnotationIndex().iterator();
+				// ArrayList<String> paraList = new ArrayList<String>();
+				int count = 0;
+				while (it.hasNext()) {
+					AnnotationFS val = it.next();
 
-				System.out.println(i + ". indexed with docno: " + id);
+					if (val.getType().getName()
+							.equals("edu.cmu.lti.bio.trec.LegalSpan")) {
+						// int start = val.getBegin();
+						// int end = val.getEnd();
+						// System.out.println(start + "\t" + end);
+
+						String paragraph = Jsoup.parse(val.getCoveredText())
+								.text();
+
+						Date now = new Date();
+						HashMap<String, Object> hshMap = new HashMap<String, Object>();
+						hshMap.put("id", id + "_" + (count++));
+						hshMap.put("docid", id);
+						hshMap.put("text", paragraph);
+						// hshMap.put("paragraph", paragraph);
+						hshMap.put("timestamp", now);
+
+						IndexingThread indexingThread = new IndexingThread(id,
+								hshMap, solrWrapper.getServer());
+						indexingThread.start();
+					}
+				}
+				System.out.println(count+" Legalspan added for "+id);
+				solrWrapper.getServer().commit();
+				// System.out.println(i + " indexed with docno: " + id);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
