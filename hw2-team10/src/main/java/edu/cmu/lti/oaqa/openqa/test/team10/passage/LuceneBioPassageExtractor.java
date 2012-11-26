@@ -1,0 +1,86 @@
+package edu.cmu.lti.oaqa.openqa.test.team10.passage;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.highlight.Fragmenter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.util.Version;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.jsoup.Jsoup;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
+import edu.cmu.lti.oaqa.framework.data.Keyterm;
+import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
+import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
+import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerSum;
+import edu.cmu.lti.oaqa.openqa.hello.passage.PassageCandidateFinder;
+import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
+
+public class LuceneBioPassageExtractor extends SimplePassageExtractor {
+
+	@Override
+	protected List<PassageCandidate> extractPassages(String question,
+			List<Keyterm> keyterms, List<RetrievalResult> documents) {
+		List<PassageCandidate> result = new ArrayList<PassageCandidate>();
+		for (RetrievalResult document : documents) {
+			System.out.println("RetrievalResult: " + document.toString());
+			String id = document.getDocID();
+			try {
+				String htmlText = wrapper.getDocText(id);
+
+				// cleaning HTML text
+				String text = Jsoup.parse(htmlText).text()
+						.replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
+				// for now, making sure the text isn't too long
+				text = text.substring(0, Math.min(5000, text.length()));
+				System.out.println(text);
+				// //////////////////////////////////////////////////////////
+				// String text = "The quick brown fox jumps over the lazy dog";
+				TermQuery query = new TermQuery(new Term("text", question));
+				TokenStream tokenStream = new SimpleAnalyzer(Version.LUCENE_36)
+						.tokenStream("text", new StringReader(text));
+				QueryScorer scorer = new QueryScorer(query, "text");
+				Fragmenter fragmenter = new SimpleSpanFragmenter(scorer);
+				Highlighter highlighter = new Highlighter(scorer);
+				highlighter.setTextFragmenter(fragmenter);
+
+				try {
+					highlighter.getBestTextFragments(tokenStream, question, true,10);//estFragment(tokenStream,"text", question,10);
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				}
+
+				// /////////////////////////////////////////////////////////
+
+				PassageCandidateFinder finder = new PassageCandidateFinder(id,
+						text, new KeytermWindowScorerSum());
+				List<String> keytermStrings = Lists.transform(keyterms,
+						new Function<Keyterm, String>() {
+							public String apply(Keyterm keyterm) {
+								return keyterm.getText();
+							}
+						});
+				List<PassageCandidate> passageSpans = finder
+						.extractPassages(keytermStrings.toArray(new String[0]));
+				for (PassageCandidate passageSpan : passageSpans)
+					result.add(passageSpan);
+					
+			} catch (SolrServerException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+}

@@ -8,8 +8,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.MapSolrParams;
+import org.apache.solr.common.params.SolrParams;
 import org.apache.uima.UIMAFramework;
 import org.apache.uima.cas.CAS;
 //import org.apache.uima.cas.Feature;
@@ -45,6 +50,22 @@ public class LegalSpanIndexing {
 	 * res.getString("uima.type.description"); this.SOLR_SERVER_URL =
 	 * res.getString("solr.server.url"); }
 	 */
+	public boolean isIndexed(String id,SolrWrapper solrWrapper) throws Exception{
+		
+		HashMap<String,String>map=new HashMap<String,String>();
+		map.put("q", "docid:"+id);
+		map.put("rows", "1");
+		SolrParams params=new MapSolrParams(map);
+		//SolrQuery query=SolrQuery(params);
+		QueryResponse resp=solrWrapper.getServer().query(params);
+		if(resp.getResults().size()>0){
+			return true;
+		}else{
+			return false;
+		}
+		
+		
+	}
 	public static void main(String args[]) {
 		SolrWrapper solrWrapper = null;
 
@@ -63,29 +84,31 @@ public class LegalSpanIndexing {
 			CAS cas = CasCreationUtils.createCas(typeDesc, null,
 					new FsIndexDescription[0]);
 			boolean cont=false;
-			for (int i = 0; i < files.length; i++) {
+			for (int i = files.length-1; i >=0; i--) {
 
-				if (cont==false && files[i].getName().equals("12411320.xmi")) {
-					cont=true;
-					
-				}
-				if(!cont){
+				
+				String currentFile = files[i].getAbsolutePath();
+				String fileName = files[i].getName();
+				String id = fileName.replace(".xmi", "").trim();
+				
+				if(main.isIndexed(id,solrWrapper)){
 					continue;
 				}
 
-				String currentFile = files[i].getAbsolutePath();
 
 				FileInputStream inputStream = new FileInputStream(currentFile);
 				try {
 					XmiCasDeserializer.deserialize(inputStream, cas, true);
 				} catch (Exception e) {
-					throw new CollectionException(e);
+					e.printStackTrace();
+					inputStream.close();
+					continue;
+					//throw new CollectionException(e);
 				} finally {
 					inputStream.close();
+					
 				}
 
-				String fileName = files[i].getName();
-				String id = fileName.replace(".xmi", "").trim();
 				Iterator<AnnotationFS> it = cas.getAnnotationIndex().iterator();
 				// ArrayList<String> paraList = new ArrayList<String>();
 				int count = 0;
