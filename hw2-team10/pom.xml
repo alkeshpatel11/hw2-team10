@@ -10,18 +10,6 @@
 			<id>oaqa</id>
 			<url>http://mu.lti.cs.cmu.edu:8081/nexus/content/groups/course</url>
 		</repository>
-		<repository>
-			<id>biojava-maven-repo</id>
-			<name>BioJava repository</name>
-			<url>http://www.biojava.org/download/maven/</url>
-		</repository>
-		<repository>
-
-			<id>biojava-maven-repo</id>
-			<name>BioJava Maven Repository</name>
-			<url>scp://portal.open-bio.org/home/websites/biojava.org/html/static/download/maven/</url>
-			<layout>default</layout>
-		</repository>
 	</repositories>
 	<distributionManagement>
 		<repository>
@@ -132,11 +120,6 @@
 			<version>0.01</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.biojava</groupId>
-			<artifactId>core</artifactId>
-			<version>1.8.1</version>
-		</dependency>
 
 		<dependency>
 			<groupId>edu.cmu.lti.oaqa.bio.annotate</groupId>
