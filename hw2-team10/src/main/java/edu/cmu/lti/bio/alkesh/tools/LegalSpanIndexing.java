@@ -50,7 +50,7 @@ public class LegalSpanIndexing {
 	 * res.getString("uima.type.description"); this.SOLR_SERVER_URL =
 	 * res.getString("solr.server.url"); }
 	 */
-	public boolean isIndexed(String id,SolrWrapper solrWrapper) throws Exception{
+	/*public boolean isIndexed(String id,SolrWrapper solrWrapper) throws Exception{
 		
 		HashMap<String,String>map=new HashMap<String,String>();
 		map.put("q", "docid:"+id);
@@ -65,7 +65,7 @@ public class LegalSpanIndexing {
 		}
 		
 		
-	}
+	}*/
 	public static void main(String args[]) {
 		SolrWrapper solrWrapper = null;
 
@@ -91,10 +91,10 @@ public class LegalSpanIndexing {
 				String fileName = files[i].getName();
 				String id = fileName.replace(".xmi", "").trim();
 				
-				if(main.isIndexed(id,solrWrapper)){
+		/*		if(main.isIndexed(id,solrWrapper)){
 					continue;
 				}
-
+*/
 
 				FileInputStream inputStream = new FileInputStream(currentFile);
 				try {
@@ -132,13 +132,13 @@ public class LegalSpanIndexing {
 						// hshMap.put("paragraph", paragraph);
 						hshMap.put("timestamp", now);
 
-						IndexingThread indexingThread = new IndexingThread(id,
-								hshMap, solrWrapper.getServer());
-						indexingThread.start();
+						//IndexingThread indexingThread = new IndexingThread(id,
+							//	hshMap, solrWrapper.getServer());
+						//indexingThread.start();
 					}
 				}
 				System.out.println(count+" Legalspan added for "+id);
-				solrWrapper.getServer().commit();
+				//solrWrapper.getServer().commit();
 				// System.out.println(i + " indexed with docno: " + id);
 			}
 		} catch (Exception e) {
