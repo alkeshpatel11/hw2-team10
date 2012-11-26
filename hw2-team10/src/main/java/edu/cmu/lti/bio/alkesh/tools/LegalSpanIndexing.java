@@ -50,22 +50,19 @@ public class LegalSpanIndexing {
 	 * res.getString("uima.type.description"); this.SOLR_SERVER_URL =
 	 * res.getString("solr.server.url"); }
 	 */
-	/*public boolean isIndexed(String id,SolrWrapper solrWrapper) throws Exception{
-		
-		HashMap<String,String>map=new HashMap<String,String>();
-		map.put("q", "docid:"+id);
-		map.put("rows", "1");
-		SolrParams params=new MapSolrParams(map);
-		//SolrQuery query=SolrQuery(params);
-		QueryResponse resp=solrWrapper.getServer().query(params);
-		if(resp.getResults().size()>0){
-			return true;
-		}else{
-			return false;
-		}
-		
-		
-	}*/
+	/*
+	 * public boolean isIndexed(String id,SolrWrapper solrWrapper) throws
+	 * Exception{
+	 * 
+	 * HashMap<String,String>map=new HashMap<String,String>(); map.put("q",
+	 * "docid:"+id); map.put("rows", "1"); SolrParams params=new
+	 * MapSolrParams(map); //SolrQuery query=SolrQuery(params); QueryResponse
+	 * resp=solrWrapper.getServer().query(params);
+	 * if(resp.getResults().size()>0){ return true; }else{ return false; }
+	 * 
+	 * 
+	 * }
+	 */
 	public static void main(String args[]) {
 		SolrWrapper solrWrapper = null;
 
@@ -83,18 +80,16 @@ public class LegalSpanIndexing {
 
 			CAS cas = CasCreationUtils.createCas(typeDesc, null,
 					new FsIndexDescription[0]);
-			boolean cont=false;
-			for (int i = files.length-1; i >=0; i--) {
+			boolean cont = false;
+			for (int i = files.length - 1; i >= 0; i--) {
 
-				
 				String currentFile = files[i].getAbsolutePath();
 				String fileName = files[i].getName();
 				String id = fileName.replace(".xmi", "").trim();
-				
-		/*		if(main.isIndexed(id,solrWrapper)){
-					continue;
-				}
-*/
+
+				/*
+				 * if(main.isIndexed(id,solrWrapper)){ continue; }
+				 */
 
 				FileInputStream inputStream = new FileInputStream(currentFile);
 				try {
@@ -103,10 +98,10 @@ public class LegalSpanIndexing {
 					e.printStackTrace();
 					inputStream.close();
 					continue;
-					//throw new CollectionException(e);
+					// throw new CollectionException(e);
 				} finally {
 					inputStream.close();
-					
+
 				}
 
 				Iterator<AnnotationFS> it = cas.getAnnotationIndex().iterator();
@@ -132,13 +127,14 @@ public class LegalSpanIndexing {
 						// hshMap.put("paragraph", paragraph);
 						hshMap.put("timestamp", now);
 
-						//IndexingThread indexingThread = new IndexingThread(id,
-							//	hshMap, solrWrapper.getServer());
-						//indexingThread.start();
+						// IndexingThread indexingThread = new
+						// IndexingThread(id,
+						// hshMap, solrWrapper.getServer());
+						// indexingThread.start();
 					}
 				}
-				System.out.println(count+" Legalspan added for "+id);
-				//solrWrapper.getServer().commit();
+				System.out.println(count + " Legalspan added for " + id);
+				// solrWrapper.getServer().commit();
 				// System.out.println(i + " indexed with docno: " + id);
 			}
 		} catch (Exception e) {
