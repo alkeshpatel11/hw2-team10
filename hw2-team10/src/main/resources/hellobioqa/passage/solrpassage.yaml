@@ -1,0 +1,11 @@
+class: edu.cmu.lti.oaqa.openqa.test.team10.passage.SolrBioPassageExtractor
+hit-list-size: 1
+server: http://peace.isri.cs.cmu.edu:9080/solr/genomics-simple/
+solrserver: http://localhost:8983/solr/genomics-legalspan/
+solrport: 8983
+port: 9080
+#stopword-file: data/stopwords.txt
+#keytermWindowScorer: edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerSum
+num-passage: 25
+persistence-provider: |
+  inherit: ecd.default-log-persistence-provider

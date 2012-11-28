@@ -67,7 +67,7 @@ public class LanguageModeling {
 
 	
 	
-	/*public void indexPassages() throws Exception {
+	public void indexPassages() throws Exception {
 
 		File files[] = new File(XMI_REPOSITORY).listFiles();
 
@@ -133,9 +133,9 @@ public class LanguageModeling {
 
 		}
 
-	}*/
+	}
 
-	/*public double findSimilarity1(String q, String p) throws Exception {
+	public double findSimilarity1(String q, String p) throws Exception {
 
 		double similarity = 0.0;
 		HashMap<String, String> hshMap = new HashMap<String, String>();
@@ -157,7 +157,7 @@ public class LanguageModeling {
 
 
 		return similarity;
-	}*/
+	}
 
 	
 	public double findSimilarity(String q, String p) throws Exception {

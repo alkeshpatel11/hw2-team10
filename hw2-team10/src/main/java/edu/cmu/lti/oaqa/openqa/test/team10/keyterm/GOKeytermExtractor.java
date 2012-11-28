@@ -40,12 +40,13 @@ import edu.cmu.lti.oaqa.framework.data.Keyterm;
  * @author Zi Yang <ziy@cs.cmu.edu>
  * 
  */
-public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
+public class GOKeytermExtractor extends AbstractKeytermExtractor {
 
 	private PosTagNamedEntityRecognizer posTagger;
 	NGramLuceneWrapper searcher;
 	int MAX_RESULTS = 50;
-	int MAX_KEYTERMS=0;
+	int MAX_KEYTERMS = 5;
+
 	@Override
 	public void initialize(UimaContext aContext)
 			throws ResourceInitializationException {
@@ -73,6 +74,7 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
 			e.printStackTrace();
 		}
 		ArrayList<GeneCount> geneList = new ArrayList<GeneCount>();
+		ArrayList<GeneCount>originalList=new ArrayList<GeneCount>();
 		if (geneSpanMap != null) {
 			Iterator<Integer> spanIt = geneSpanMap.keySet().iterator();
 
@@ -81,14 +83,17 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
 				int end = geneSpanMap.get(begin);
 				// System.out.println(sentenceText.substring(begin,end));
 				String geneName = question.substring(begin, end);
+				
+				if(geneName.length()<2){
+					continue;
+				}
 				// System.out.println("Annotated: "+geneTag.getGeneName()+"\t"+begin+"\t"+end);
-
+				originalList.add(new GeneCount(geneName,1.0));
 				ArrayList<GeneCount> relatedGenes = new ArrayList<GeneCount>();
-				/*try {
-					relatedGenes = searcher.searchIndex(geneName, MAX_RESULTS);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}*/
+				/*
+				 * try { relatedGenes = searcher.searchIndex(geneName,
+				 * MAX_RESULTS); } catch (Exception e) { e.printStackTrace(); }
+				 */
 				if (relatedGenes.size() > 0) {
 					relatedGenes = findBestRelatedGenes(relatedGenes);
 				}
@@ -108,74 +113,83 @@ public class SimpleKeytermExtractor extends AbstractKeytermExtractor {
 		 * questionTokens.length; i++) { keyterms.add(new
 		 * Keyterm(questionTokens[i])); }
 		 */
-		//Finding synonyms from Gene Ontology
-		ArrayList<GeneCount> synFromGo = findBestRelatedGenesFromGO(geneList);		
-		
+		// Finding synonyms from Gene Ontology
+		ArrayList<GeneCount> synFromGo = findBestRelatedGenesFromGO(geneList);
+
 		for (int i = 0; i < geneList.size(); i++) {
-			keyterms.add(new Keyterm(removeEscapeChars(geneList.get(i).getGeneName())));
-			System.out.println("$$$$ "+geneList.get(i).getGeneName());
+			keyterms.add(new Keyterm(removeEscapeChars(geneList.get(i)
+					.getGeneName())));
+			System.out.println("$$$$ " + geneList.get(i).getGeneName());
 		}
-		
-		//Adding synonyms retreived from gene ontology to the keywords at a constant weight of 0.5
-		
+
+		// Adding synonyms retreived from gene ontology to the keywords at a
+		// constant weight of 0.5
+
 		for (int i = 0; i < synFromGo.size(); i++) {
-      keyterms.add(new Keyterm(removeEscapeChars(synFromGo.get(i).getGeneName())));
-      System.out.println("$$$$ FROM GO "+synFromGo.get(i).getGeneName());
-    }
+			keyterms.add(new Keyterm(removeEscapeChars(synFromGo.get(i)
+					.getGeneName())));
+			System.out
+					.println("$$$$ FROM GO " + synFromGo.get(i).getGeneName());
+			
+		}
 		return keyterms;
 	}
 
 	private ArrayList<GeneCount> findBestRelatedGenes(ArrayList<GeneCount> genes) {
 
-		
 		ArrayList<GeneCount> bestGenes = new ArrayList<GeneCount>();
 		double threshold = 0.3 * genes.get(0).getCount();
 		for (int i = 0; i < genes.size(); i++) {
 			if (genes.get(i).getCount() >= threshold) {
 				bestGenes.add(genes.get(i));
 			}
-			if(i>MAX_KEYTERMS){
+			if (i > MAX_KEYTERMS) {
 				break;
 			}
 		}
 
 		return bestGenes;
 	}
-	
-	//Bharat 
-	
-	private ArrayList<GeneCount> findBestRelatedGenesFromGO(ArrayList<GeneCount> genes)
-	{  
-	ArrayList<GeneCount> geneListToSend = new ArrayList<GeneCount>();
-	try {
-    OBOGraph graph = new OBOGraph(new FileReader(new File("./data/gene_ontology_ext.obo")));
-    //System.out.println(graph.toString());
-    //System.out.println("Genes array size = " + genes.size());    
-    for(int i=0; i<genes.size(); i++)
-    {
-      //System.out.println("Bharat = " + genes.get(i).getGeneName());
-      ArrayList<OBONode> oboNodes = graph.search(genes.get(i).getGeneName());
-      for(OBONode o: oboNodes)
-      {
-        //System.out.println("BHARAT get names = " + o.getName());
-        
-        for(String syn: o.getAllSynonyms())
-        {
-          //System.out.println("BHARAT Synomyms= "+ syn);
-          geneListToSend.add(new GeneCount(syn, 0.5));
-        }
-      }
-    }
-  } catch (FileNotFoundException e) {
-    // TODO Auto-generated catch block
-    e.printStackTrace();
-  }
-  
-	return geneListToSend;
+
+	// Bharat
+
+	private ArrayList<GeneCount> findBestRelatedGenesFromGO(
+			ArrayList<GeneCount> genes) {
+		ArrayList<GeneCount> geneListToSend = new ArrayList<GeneCount>();
+		try {
+			OBOGraph graph = new OBOGraph(new FileReader(new File(
+					"./data/gene_ontology_ext.obo")));
+			// System.out.println(graph.toString());
+			// System.out.println("Genes array size = " + genes.size());
+			outer:for (int i = 0; i < genes.size(); i++) {
+				// System.out.println("Bharat = " + genes.get(i).getGeneName());
+				ArrayList<OBONode> oboNodes = graph.search(genes.get(i)
+						.getGeneName());
+				for (OBONode o : oboNodes) {
+					// System.out.println("BHARAT get names = " + o.getName());
+
+					for (String syn : o.getAllSynonyms()) {
+						// System.out.println("BHARAT Synomyms= "+ syn);
+						if(syn.length()<2){
+							continue;
+						}
+						geneListToSend.add(new GeneCount(syn, 0.5));
+						if(geneListToSend.size()>this.MAX_KEYTERMS){
+							break outer;
+						}
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return geneListToSend;
 	}
-	
-	private String removeEscapeChars(String keyterms){
-		
+
+	private String removeEscapeChars(String keyterms) {
+
 		keyterms = keyterms.replace('(', ' ');
 		keyterms = keyterms.replace('[', ' ');
 		keyterms = keyterms.replace(')', ' ');

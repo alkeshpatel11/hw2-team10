@@ -81,17 +81,18 @@ public class SiteQBioPassageExtractor extends SimplePassageExtractor {
     Properties props = new Properties();
     props.put("annotators", "tokenize, ssplit, pos, lemma");
     StanfordCoreNLP pipeline = new StanfordCoreNLP(props);  
-    int NumSen = 3;
+    int NumSen = 4;
     for (RetrievalResult document : documents) {
       System.out.println("RetrievalResult: " + document.toString());
       String id = document.getDocID();
       try {
         String htmlText = wrapper.getDocText(id);
         // cleaning HTML text
-        String text = Jsoup.parse(htmlText).text().replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
+        //String text = Jsoup.parse(htmlText).text().replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
         // for now, making sure the text isn't too long
-        text = text.substring(0, Math.min(5000, text.length()));
-        System.out.println(text);
+        //text = text.substring(0, Math.min(5000, text.length()));
+        String text=htmlText;
+        //System.out.println(text);
         // read some text in the text variable
         //String text2 = text.trim();
         // create an empty Annotation just with the given text

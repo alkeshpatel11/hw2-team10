@@ -1,8 +1,12 @@
 package edu.cmu.lti.oaqa.openqa.test.team10.passage;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -12,8 +16,12 @@ import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.search.highlight.TextFragment;
 import org.apache.lucene.util.Version;
+import org.apache.solr.analysis.HTMLStripCharFilterFactory;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.uima.UimaContext;
+import org.apache.uima.resource.ResourceInitializationException;
 import org.jsoup.Jsoup;
 
 import com.google.common.base.Function;
@@ -28,6 +36,54 @@ import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
 
 public class LuceneBioPassageExtractor extends SimplePassageExtractor {
 
+	Set<String>stopWords=new HashSet<String>();
+	@Override
+	public void initialize(UimaContext aContext)
+			throws ResourceInitializationException {
+		super.initialize(aContext);
+		String stopFile = (String) aContext
+				.getConfigParameterValue("stopword-file");//data/stopwords.txt
+		try{
+			loadStopWords(stopFile);
+		}catch(Exception e){
+			throw new ResourceInitializationException();
+		}
+		
+	}
+
+	private void loadStopWords(String stopFile) throws Exception {
+		BufferedReader bfr = null;
+		try {
+			bfr = new BufferedReader(new FileReader(stopFile));
+			String text="";
+			char chars[]=new char[2048];
+			while((bfr.read(chars))!=-1){
+				text+=new String(chars);
+				chars=null;
+				chars=new char[2048];
+			}
+			bfr.close();
+			bfr=null;
+			text=text.trim();
+			
+			String words[]=text.split("[\n]");
+			for(int i=0;i<words.length;i++){
+				stopWords.add(words[i]);
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ResourceInitializationException();
+		} finally {
+			if(bfr!=null){
+				bfr.close();
+				bfr=null;
+			}
+		}
+
+	}
+
 	@Override
 	protected List<PassageCandidate> extractPassages(String question,
 			List<Keyterm> keyterms, List<RetrievalResult> documents) {
@@ -39,43 +95,26 @@ public class LuceneBioPassageExtractor extends SimplePassageExtractor {
 				String htmlText = wrapper.getDocText(id);
 
 				// cleaning HTML text
-				String text = Jsoup.parse(htmlText).text()
-						.replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
+				// String text = Jsoup.parse(htmlText).text()
+				// .replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
 				// for now, making sure the text isn't too long
-				text = text.substring(0, Math.min(5000, text.length()));
-				System.out.println(text);
-				// //////////////////////////////////////////////////////////
-				// String text = "The quick brown fox jumps over the lazy dog";
-				TermQuery query = new TermQuery(new Term("text", question));
-				TokenStream tokenStream = new SimpleAnalyzer(Version.LUCENE_36)
-						.tokenStream("text", new StringReader(text));
-				QueryScorer scorer = new QueryScorer(query, "text");
-				Fragmenter fragmenter = new SimpleSpanFragmenter(scorer);
-				Highlighter highlighter = new Highlighter(scorer);
-				highlighter.setTextFragmenter(fragmenter);
+				// text = text.substring(0, Math.min(5000, text.length()));
+				String text = htmlText;
+				// System.out.println(text);
 
-				try {
-					highlighter.getBestTextFragments(tokenStream, question, true,10);//estFragment(tokenStream,"text", question,10);
-				} catch (Exception e) {
-					e.printStackTrace();
-					continue;
-				}
-
-				// /////////////////////////////////////////////////////////
-
-				PassageCandidateFinder finder = new PassageCandidateFinder(id,
-						text, new KeytermWindowScorerSum());
+				LuceneBioPassageCandidateFinder finder = new LuceneBioPassageCandidateFinder(
+						id, text);
 				List<String> keytermStrings = Lists.transform(keyterms,
 						new Function<Keyterm, String>() {
 							public String apply(Keyterm keyterm) {
 								return keyterm.getText();
 							}
 						});
-				List<PassageCandidate> passageSpans = finder
-						.extractPassages(keytermStrings.toArray(new String[0]));
+				List<PassageCandidate> passageSpans = finder.extractPassages(
+						question, keytermStrings,stopWords);
 				for (PassageCandidate passageSpan : passageSpans)
 					result.add(passageSpan);
-					
+
 			} catch (SolrServerException e) {
 				e.printStackTrace();
 			}
