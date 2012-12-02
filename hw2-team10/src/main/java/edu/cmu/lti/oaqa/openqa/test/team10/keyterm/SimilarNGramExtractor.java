@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 import edu.cmu.lti.bio.alkesh.genetrainer.NGramLuceneWrapper;
 
-public class SynonymExtractor {
+public class SimilarNGramExtractor {
 
 	public ArrayList<GeneCount> getSynonyms(String term) throws Exception {
 
@@ -31,7 +31,7 @@ public class SynonymExtractor {
 	
 	public static void main(String args[]){
 		try{
-			SynonymExtractor extractor=new SynonymExtractor();
+			SimilarNGramExtractor extractor=new SimilarNGramExtractor();
 			ArrayList<GeneCount>list=extractor.getSynonyms("beta-amyloid precursor");
 			for(int i=0;i<list.size();i++){
 				System.out.println(list.get(i).getGeneName());

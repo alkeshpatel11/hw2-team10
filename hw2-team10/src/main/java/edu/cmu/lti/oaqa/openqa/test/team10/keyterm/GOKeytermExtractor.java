@@ -37,8 +37,8 @@ import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
 /**
  * 
- * @author Zi Yang <ziy@cs.cmu.edu>
- * 
+ * @author Bharat Dutt 
+ *  
  */
 public class GOKeytermExtractor extends AbstractKeytermExtractor {
 
