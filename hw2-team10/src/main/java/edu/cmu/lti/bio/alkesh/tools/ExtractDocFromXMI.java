@@ -119,8 +119,13 @@ public class ExtractDocFromXMI {
 			//HashSet<String>hshSet=new HashSet<String>();
 			//boolean flag=false;
 			for (int i = 0; i < files.length; i++) {
-
+//13500
 				String currentFile = files[i].getAbsolutePath();
+				if(i<40075){
+					//flag=true;
+					continue;
+				}
+				
 				FileInputStream inputStream = new FileInputStream(currentFile);
 				try {
 					XmiCasDeserializer.deserialize(inputStream, cas, true);

@@ -14,46 +14,39 @@ pipeline:
   - inherit: jdbc.sqlite.cse.phase  
     name: keyterm-extractor
     options: |
-      - inherit: helloqa.keyterm.simple
+      #- inherit: helloqa.keyterm.simple
       #- inherit: hellobioqa.team10.keyterm.bdutt-simple
       #- inherit: hellobioqa.team10.keyterm.alkesh-simple
       #- inherit: hellobioqa.team10.keyterm.yifeih-simple
       #- inherit: hellobioqa.team10.keyterm.zeyuanl-simple
-      #- inherit: hellobioqa.keyterm.simple
+      - inherit: hellobioqa.keyterm.simple
       
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist
     options: |
       - inherit: hellobioqa.retrieval.simple-solr-strategist
+      #- inherit: hellobioqa.retrieval.enhanced-solr-strategist
       #- inherit: hellobioqa.retrieval.zeyuanl-solr-strategist
       #- inherit: hellobioqa.retrieval.zeyuanl-phrase-strategist
           
   - inherit: jdbc.sqlite.cse.phase  
     name: passage-extractor
     options: |
-      #- inherit: hellobioqa.passage.simple
+      - inherit: hellobioqa.passage.simple
       #- inherit: hellobioqa.passage.lucenepassage
-      - inherit: hellobioqa.passage.solrpassage
+      #- inherit: hellobioqa.passage.solrpassage
       
   - inherit: helloqa.eval.keyterm-aggregator-consumer
 
-  - inherit: jdbc.eval.retrieval-aggregator-consumer
-      
-  - inherit: helloqa.eval.passage-map-aggregator-consumer      
-    
-post-process: 
-  - inherit: helloqa.eval.keyterm-evaluator-consumer
-  - inherit: report.csv-report-generator
-    builders: |
-      - inherit: helloqa.report.keyterm-report-component
+  - inherit: internal.eval.cse-retrieval-aggregator-consumer
+  - inherit: internal.eval.cse-passage-map-aggregator-consumer
 
-  - inherit: jdbc.eval.retrieval-evaluator-consumer
+post-process: 
+  - inherit: internal.eval.cse-retrieval-evaluator-consumer
   - inherit: report.csv-report-generator
     builders: |
-      - inherit: jdbc.report.f-measure-report-component
-          
-  - inherit: helloqa.eval.passage-map-evaluator-consumer
+      - inherit: internal.report.f-measure-report-component
+  - inherit: internal.eval.cse-passage-map-evaluator-consumer
   - inherit: report.csv-report-generator
     builders: |
-      - inherit: helloqa.report.map-report-component
-  
+      - inherit: internal.report.map-report-component

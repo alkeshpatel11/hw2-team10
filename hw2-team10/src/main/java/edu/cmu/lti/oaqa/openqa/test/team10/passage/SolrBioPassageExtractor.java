@@ -1,21 +1,15 @@
 package edu.cmu.lti.oaqa.openqa.test.team10.passage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.params.MapSolrParams;
-import org.apache.solr.common.params.SolrParams;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.resource.ResourceInitializationException;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 import edu.cmu.lti.oaqa.core.provider.solr.SolrWrapper;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
@@ -38,10 +32,8 @@ public class SolrBioPassageExtractor extends SimpleBioPassageExtractor {
 			this.passageListSize = Integer.parseInt((String) aContext
 					.getConfigParameterValue("num-passage"));
 		}
-		String serverUrl = (String) aContext
-				.getConfigParameterValue("solrserver");
-		Integer serverPort = (Integer) aContext
-				.getConfigParameterValue("solrport");
+		String serverUrl = (String) aContext.getConfigParameterValue("server");
+		Integer serverPort = (Integer) aContext.getConfigParameterValue("port");
 		Boolean embedded = (Boolean) aContext
 				.getConfigParameterValue("embedded");
 		String core = (String) aContext.getConfigParameterValue("core");
@@ -71,33 +63,35 @@ public class SolrBioPassageExtractor extends SimpleBioPassageExtractor {
 				SolrQuery query = new SolrQuery();
 				query.set("q", question);
 				query.setFilterQueries("docid:" + id);
-				query.setFields("score","begin","end");
+				query.setFields("score", "begin", "end");
+
 				SolrDocumentList passageList = solrWrapper.runQuery(query,
 						passageListSize);
 				for (int i = 0; i < passageList.size(); i++) {
-					SolrDocument doc=passageList.get(i);
-					Integer startStr=(Integer)doc.getFieldValue("begin");
-					Integer endStr=(Integer)doc.getFieldValue("end");
-					Float scoreStr=(Float)doc.getFieldValue("score");
-					int start=0;
-					int end=0;
-					float score=0.0f;
-					
-					if(startStr!=null){
-						start=startStr.intValue();
+					SolrDocument doc = passageList.get(i);
+					Integer startStr = (Integer) doc.getFieldValue("begin");
+					Integer endStr = (Integer) doc.getFieldValue("end");
+					Float scoreStr = (Float) doc.getFieldValue("score");
+					int start = 0;
+					int end = 0;
+					float score = 0.0f;
+
+					if (startStr != null) {
+						start = startStr.intValue();
 					}
-					if(endStr!=null){
-						end=endStr.intValue();
+					if (endStr != null) {
+						end = endStr.intValue();
 					}
-					if(scoreStr!=null){
-						score=scoreStr.floatValue();
+					if (scoreStr != null) {
+						score = scoreStr.floatValue();
 					}
-					PassageCandidate passageCandidate = new PassageCandidate(id, start, end, score, question);
+					PassageCandidate passageCandidate = new PassageCandidate(
+							id, start, end, score, question);
 					result.add(passageCandidate);
 				}
 			} catch (SolrServerException e) {
 				e.printStackTrace();
-			} catch (AnalysisEngineProcessException e) {				
+			} catch (AnalysisEngineProcessException e) {
 				e.printStackTrace();
 			}
 		}

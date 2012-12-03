@@ -16,31 +16,12 @@ package edu.cmu.lti.oaqa.openqa.test.team10.retrieval;
  *  limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
-
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
-import org.apache.uima.UimaContext;
-import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
-import org.apache.uima.resource.ResourceInitializationException;
 
 import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
-import edu.cmu.lti.oaqa.core.provider.solr.SolrWrapper;
-import edu.cmu.lti.oaqa.cse.basephase.retrieval.AbstractRetrievalStrategist;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
-import edu.cmu.lti.oaqa.openqa.test.team10.keyterm.SynonymExtractor;
-import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.util.CoreMap;
+import edu.cmu.lti.oaqa.openqa.test.team10.keyterm.SimilarNGramExtractor;
 
 /**
  * RS boosting phrase information
@@ -70,7 +51,7 @@ public class PhraseRetrievalStrategist extends SuperRetrievalStrategist {
   protected String formulateQuery(String questionText, List<Keyterm> keyterms) throws Exception {
     StringBuffer result = new StringBuffer();
     PorterStemmer stemmer = new PorterStemmer();
-    SynonymExtractor synextrator = new SynonymExtractor();
+    SimilarNGramExtractor synextrator = new SimilarNGramExtractor();
 
     for (int i = 0; i < keyterms.size(); i++) {
       Keyterm keyterm = keyterms.get(i);

@@ -32,7 +32,7 @@ import edu.cmu.lti.oaqa.core.provider.solr.SolrWrapper;
 import edu.cmu.lti.oaqa.cse.basephase.retrieval.AbstractRetrievalStrategist;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
-import edu.cmu.lti.oaqa.openqa.test.team10.keyterm.SynonymExtractor;
+import edu.cmu.lti.oaqa.openqa.test.team10.keyterm.SimilarNGramExtractor;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -116,7 +116,7 @@ public class SuperRetrievalStrategist extends AbstractRetrievalStrategist {
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		List<String> usefulwords = new LinkedList<String>();
 		PorterStemmer stemmer = new PorterStemmer();
-		SynonymExtractor synextrator = new SynonymExtractor();
+		SimilarNGramExtractor synextrator = new SimilarNGramExtractor();
 
 		// include NN, VB and ADJ
 		for (CoreMap sentence : sentences) {

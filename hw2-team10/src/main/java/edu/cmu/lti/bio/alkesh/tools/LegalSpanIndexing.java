@@ -39,7 +39,8 @@ public class LegalSpanIndexing {
 
 	String XMI_REPOSITORY = "C:/Users/alkesh/Downloads/Trec06_annotated_xmi/";
 	String TYPE_DESC_XML = "src/main/resources/edu/cmu/lti/oaqa/bio/model/bioTypes.xml";
-	String SOLR_SERVER_URL = "http://localhost:8983/solr/genomics-legalspan/";
+	//String SOLR_SERVER_URL = "http://localhost:8983/solr/genomics-legalspan/";
+	String SOLR_SERVER_URL = "http://peace.isri.cs.cmu.edu:9080/solr/genomics-legalspan/";
 
 	SolrWrapper solrWrapper = null;
 	public LegalSpanIndexing() {
@@ -152,9 +153,11 @@ public class LegalSpanIndexing {
 			// boolean cont = false;
 			File queue[] = new File(
 					"C:/Users/alkesh/Downloads/ParallelIndexing/").listFiles();
-			//main.bulkIndexing(queue[0].listFiles(), cas);
+			for(int i=0;i<queue.length;i++){
+				main.bulkIndexing(queue[i].listFiles(), cas);
+			}
 			/////Multithread implementation
-			IndexingThread indexingThread[] = new IndexingThread[queue.length];
+			/*IndexingThread indexingThread[] = new IndexingThread[queue.length];
 			for (int i = 0; i < indexingThread.length; i++) {
 				indexingThread[i] = new IndexingThread(queue[i], cas,
 						main.solrWrapper.getServer());
@@ -175,7 +178,7 @@ public class LegalSpanIndexing {
 				if (stop) {
 					break;
 				}
-			}
+			}*/
 
 		} catch (Exception e) {
 			e.printStackTrace();
