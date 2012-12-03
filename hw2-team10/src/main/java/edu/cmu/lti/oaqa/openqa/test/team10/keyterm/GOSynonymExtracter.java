@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.uima.UimaContext;
 import org.apache.uima.resource.ResourceInitializationException;
 
-import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 import edu.cmu.lti.oaqa.bio.resource_wrapper.obo.OBOGraph;
 import edu.cmu.lti.oaqa.bio.resource_wrapper.obo.OBONode;
 import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
