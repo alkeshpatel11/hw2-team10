@@ -1,0 +1,5 @@
+class: edu.cmu.lti.oaqa.openqa.test.team10.keyterm.GOSynonymExtracter
+max_size: 10
+
+persistence-provider: |
+  inherit: ecd.default-log-persistence-provider
