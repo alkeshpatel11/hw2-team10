@@ -30,7 +30,14 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
-
+/**
+ * This class cut the formated docs(not html) into cents using corenlp.
+ * Each N three sentences in order will be considered as a candidate passage.
+ * Where N is set to be 3 as default.
+ * the basic score method is used for this class
+ * @author Yifei
+ *
+ */
 public class SimpleCentBioPassageExtractor extends SimplePassageExtractor {
   
   @Override
@@ -71,10 +78,6 @@ public class SimpleCentBioPassageExtractor extends SimplePassageExtractor {
       KeyIdf.put(keyterm, (double) tmp);
     }
     List<PassageCandidate> result = new ArrayList<PassageCandidate>();
-    //score1 + score2
-    //for each sentence in a document, get score add set a threhold, if large enough add into result
-    //window = new PassageCandidate( docId , begin , end , (float) score , null );
- // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
     Properties props = new Properties();
     props.put("annotators", "tokenize, ssplit, pos, lemma");
     StanfordCoreNLP pipeline = new StanfordCoreNLP(props);  
@@ -90,10 +93,6 @@ public class SimpleCentBioPassageExtractor extends SimplePassageExtractor {
         //String text = htmlText;
         text = text.substring(0, Math.min(5000, text.length()));
         System.out.println(text);
-        
-        
-        
-        
         //SIMPLE MEHOD START
         List<List<PassageSpan>> matchingSpans = new ArrayList<List<PassageSpan>>();
         List<PassageSpan> matchedSpans = new ArrayList<PassageSpan>();
@@ -116,17 +115,9 @@ public class SimpleCentBioPassageExtractor extends SimplePassageExtractor {
             totalKeyterms = totalKeyterms + 1;
           }
         }
-        //SIMPLE END 
-        // read some text in the text variable
-        //String text2 = text.trim();
-        // create an empty Annotation just with the given text
+
         Annotation doc = new Annotation(text);
-        
-        // run all Annotators on this text
         pipeline.annotate(doc);
-        
-        // these are all the sentences in this document
-        // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
         List<CoreMap> sentences = doc.get(SentencesAnnotation.class);
         int offset = 0;
         if (sentences.size() < NumSen){
@@ -185,21 +176,13 @@ public class SimpleCentBioPassageExtractor extends SimplePassageExtractor {
           } catch (AnalysisEngineProcessException e) {
             e.printStackTrace();
           }
-          result.add( window );
-          
-          
+          result.add( window );       
          }
-         
-         
-      
 
       } catch (SolrServerException e) {
         e.printStackTrace();
       }
     }
-  
-
-
     return result;
   }
   

@@ -18,7 +18,11 @@ import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
 import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
 
-
+/**
+ * This passage extractor assigns weighted frequency based on IDF to all keywords when doing passage scoring.
+ * @author Yifei
+ *
+ */
 public class IDFBioPassageExtractor extends SimplePassageExtractor {
   
   @Override

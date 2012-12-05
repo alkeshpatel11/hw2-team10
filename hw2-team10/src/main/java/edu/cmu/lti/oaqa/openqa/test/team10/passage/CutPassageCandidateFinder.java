@@ -27,7 +27,15 @@ import java.util.Collections;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 
 import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
-
+/**
+ * This class implements basic score method.
+ * All pair of keywords with limited distance compose a candidate window.
+ * This class use binary search to identify whether a keyterm is in span.
+ * 
+ * 
+ * @author Yitei
+ *
+ */
 public class CutPassageCandidateFinder {
 	private String text;
 	private String docId;
@@ -115,8 +123,6 @@ public class CutPassageCandidateFinder {
   }
 	
 	public List<PassageCandidate> extractPassages( String[] keyterms,int gap) {
-		List<List<PassageSpan>> matchingSpans = new ArrayList<List<PassageSpan>>();
-		List<PassageSpan> matchedSpans = null;
 		List<List<Integer>> matchingStarts = new ArrayList<List<Integer>>();
 		List<Integer> matchedStarts = null;
 		int[] emptyAfter = new int[keyterms.length];
@@ -159,20 +165,10 @@ public class CutPassageCandidateFinder {
 				for ( int i=0;i<matchingStarts.size();i++ ) {
 				  List<Integer> keytermMatches = matchingStarts.get(i);
 				  if (keytermMatches.isEmpty()) {continue;}
-					boolean thisKeytermFound = false;
 					int l = keyterms[i].length();
 					int ee = matchingStarts.size()-i;
 					int found = checker(begin,end-l,keytermMatches);
 					matchesFound += found*(ee-emptyAfter[i]);
-					/*for(int ii=ee-1;ii>=0;ii--)
-					{ 
-					  List<Integer> ttt = matchingStarts.get(ii);
-					  if (ttt.isEmpty())
-					    continue;
-					  if(checker(begin,end-l,ttt)>0){
-					    keytermsFound++;break;
-					  }
-					}*/
 				  if ( found>0 ||keytermsFound>0){
 				    keytermsFound++;
 					}
@@ -187,11 +183,7 @@ public class CutPassageCandidateFinder {
 				result.add( window );
 			}
 		}
-
-		// Sort the result in order of decreasing score.
-		// Collections.sort ( result , new PassageCandidateComparator() );
 		return result;
-
 	}
 	private class PassageCandidateComparator implements Comparator {
 		// Ranks by score, decreasing.
@@ -221,8 +213,4 @@ public class CutPassageCandidateFinder {
 			}
 		}
 	}
-
-
-
-
 }

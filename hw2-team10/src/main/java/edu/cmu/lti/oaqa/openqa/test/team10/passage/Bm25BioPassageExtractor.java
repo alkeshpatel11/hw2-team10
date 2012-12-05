@@ -18,7 +18,12 @@ import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
 import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
 
-
+/**
+ * This class returned a list of passage candidates based on bm25 scoring algirthom
+ * The candidate passage windows are all spans between two keywords
+ * @author Yifei
+ *
+ */
 public class Bm25BioPassageExtractor extends SimplePassageExtractor {
   
   @Override
@@ -65,9 +70,7 @@ public class Bm25BioPassageExtractor extends SimplePassageExtractor {
       try {
         String htmlText = wrapper.getDocText(id);
 
-        // cleaning HTML text
-        String text = Jsoup.parse(htmlText).text().replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
-        // for now, making sure the text isn't too long
+        String text = Jsoup.parse(htmlText).text().replaceAll("([\177-\377\0-\32]*)", "");
         text = text.substring(0, Math.min(5000, text.length()));
         System.out.println(text);
 

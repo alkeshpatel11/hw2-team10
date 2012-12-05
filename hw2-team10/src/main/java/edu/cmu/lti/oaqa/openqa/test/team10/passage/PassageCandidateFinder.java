@@ -26,7 +26,11 @@ import java.util.regex.Pattern;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 
 import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
-
+/**
+ * This passage candidate Finder supports weighted keywords frequency.
+ * @author Yifei
+ *
+ */
 public class PassageCandidateFinder {
   private String text;
   private String docId;
@@ -143,18 +147,6 @@ public class PassageCandidateFinder {
       }
     }
   }
-
-  /*public static void main ( String[] args ) {
-    PassageCandidateFinder passageFinder1 = new PassageCandidateFinder( "1" , "The quick brown fox jumped over the quick brown fox." ,
-        new KeytermWindowScorerProduct() );
-    PassageCandidateFinder passageFinder2 = new PassageCandidateFinder( "1" , "The quick brown fox jumped over the quick brown fox." ,
-        new KeytermWindowScorerSum() );
-    String[] keyterms = { "quick" , "jumped" };
-    List<PassageCandidate> windows1 = passageFinder1.extractPassages( keyterms );
-    System.out.println( "Windows (product scoring): " + windows1 );
-    List<PassageCandidate> windows2 = passageFinder2.extractPassages( keyterms );
-    System.out.println( "Windows (sum scoring): " + windows2 );
-  }*/
 
 
 }

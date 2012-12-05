@@ -20,7 +20,12 @@ import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerSum;
 import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
 import edu.cmu.lti.oaqa.openqa.hello.passage.PassageCandidateFinder;
 //import edu.cmu.lti.oaqa.openqa.test.team10.passage.PassageCandidateFinder.PassageSpan;
-
+/**
+ * This class cut the html doc into possible paragraph chunks using a naive method.
+ * And do the passage retrieval separately.
+ * @author Yifei
+ *
+ */
 public class HtmlSimpleBioPassageExtractor extends SimplePassageExtractor {
 
   @Override

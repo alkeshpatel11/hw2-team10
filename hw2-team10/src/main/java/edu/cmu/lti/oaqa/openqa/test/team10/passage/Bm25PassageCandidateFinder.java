@@ -26,24 +26,33 @@ import java.util.regex.Pattern;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 
 import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
-
+/**
+ * This class implements bm25 scoring.
+ * Passage windows are all spans composed by all combination of two keywords' position
+ * @author Yitei
+ *
+ */
 public class Bm25PassageCandidateFinder {
   private String text;
   private String docId;
 
-  private int textSize;      // values for the entire text
   private double totalMatches;  
   private double totalKeyterms;
-
   private KeytermWindowScorer scorer;
 
   public Bm25PassageCandidateFinder( String docId , String text , KeytermWindowScorer scorer ) {
     super();
     this.text = text;
     this.docId = docId;
-    this.textSize = text.length();
     this.scorer = scorer;
   }
+  /**
+   * This method returns a list of candidate passages.
+   * This class implements bm25 scoring.
+   * Passage windows are all spans composed by all combination of two keywords' position
+   * @author Yitei
+   *
+   */
   public List<PassageCandidate> extractPassages( String[] keyterms,Map<String,Double> idf) {
     List<List<PassageSpan>> matchingSpans = new ArrayList<List<PassageSpan>>();
     List<PassageSpan> matchedSpans = new ArrayList<PassageSpan>();
@@ -84,7 +93,6 @@ public class Bm25PassageCandidateFinder {
     long totalLength = 0;
     for ( Integer begin : leftEdges ) {
       for ( Integer end : rightEdges ) {
-        double score = 0;
         if ( end <= begin ) continue; 
           numOfWindow++;
           totalLength += (end - begin + 1);
@@ -97,26 +105,20 @@ public class Bm25PassageCandidateFinder {
       for ( Integer end : rightEdges ) {
         double score = 0;
         if ( end <= begin ) continue; 
-        // This code runs for each window.
-        //double keytermsFound = 0;
         double matchesFound = 0;
         int i = 0;
         for ( List<PassageSpan> keytermMatches : matchingSpans ) {
-          boolean thisKeytermFound = false;
+
           for ( PassageSpan keytermMatch : keytermMatches ) {
             if ( keytermMatch.containedIn( begin , end ) ){
-              matchesFound++; //idf.get(keys.get(i));
-              
-              //thisKeytermFound = true;
+              matchesFound++; 
             }
           }
-          //if ( thisKeytermFound ) keytermsFound = keytermsFound + idf.get(keys.get(i));
           score += 1.0*matchesFound*(k1+1)/(0.0+matchesFound+k1*(1-b+b*(0.0+end-begin+1)/avgdl))*idf.get(keys.get(i));
           i++;
           
         }
-        
-        //double score = scorer.scoreWindow( begin , end , matchesFound , totalMatches , keytermsFound , totalKeyterms , textSize );
+
         PassageCandidate window = null;
         try {
           window = new PassageCandidate( docId , begin , end , (float) score , null );
@@ -126,9 +128,6 @@ public class Bm25PassageCandidateFinder {
         result.add( window );
       }
     }
-
-    // Sort the result in order of decreasing score.
-    // Collections.sort ( result , new PassageCandidateComparator() );
     return result;
 
   }

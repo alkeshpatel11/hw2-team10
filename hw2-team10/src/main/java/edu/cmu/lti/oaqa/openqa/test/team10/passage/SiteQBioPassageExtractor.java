@@ -24,7 +24,13 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
-
+/**
+ * This class cut the formated docs(not html) into cents using corenlp.
+ * Each N three sentences in order will be considered as a candidate passage.
+ * Where N is set to be 3 as default.
+ * the siteQ score method is used for this class
+ * @author Yifei
+ */
 public class SiteQBioPassageExtractor extends SimplePassageExtractor {
   
   @Override
@@ -65,10 +71,6 @@ public class SiteQBioPassageExtractor extends SimplePassageExtractor {
       KeyIdf.put(keyterm, (double) tmp);
     }
     List<PassageCandidate> result = new ArrayList<PassageCandidate>();
-    //score1 + score2
-    //for each sentence in a document, get score add set a threhold, if large enough add into result
-    //window = new PassageCandidate( docId , begin , end , (float) score , null );
- // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution 
     Properties props = new Properties();
     props.put("annotators", "tokenize, ssplit, pos, lemma");
     StanfordCoreNLP pipeline = new StanfordCoreNLP(props);  
@@ -78,18 +80,8 @@ public class SiteQBioPassageExtractor extends SimplePassageExtractor {
       String id = document.getDocID();
       try {
         String htmlText = wrapper.getDocText(id);
-        // cleaning HTML text
-        //String text = Jsoup.parse(htmlText).text().replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
-        // for now, making sure the text isn't too long
-        //text = text.substring(0, Math.min(5000, text.length()));
         String text=htmlText;
-        //System.out.println(text);
-        // read some text in the text variable
-        //String text2 = text.trim();
-        // create an empty Annotation just with the given text
         Annotation doc = new Annotation(text);
-        
-        // run all Annotators on this text
         pipeline.annotate(doc);
         
         // these are all the sentences in this document
@@ -105,9 +97,6 @@ public class SiteQBioPassageExtractor extends SimplePassageExtractor {
         List<Integer> ends = new ArrayList<Integer>();
         for(CoreMap sentence: sentences) {
           String sent = sentence.toString();
-          //Pattern p = Pattern.compile( sent );
-          //Matcher m = p.matcher( text.substring(offset) );
-          //m.find();
           int start = text.substring(offset).indexOf(sent);
           int ending = start+sent.length();
           
