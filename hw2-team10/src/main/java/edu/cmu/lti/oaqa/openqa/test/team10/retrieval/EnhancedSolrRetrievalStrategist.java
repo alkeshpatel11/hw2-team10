@@ -23,7 +23,8 @@ import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
  * 
  * @author alkeshku <alkeshku@andrew.cmu.edu>
  */
-public class EnhancedSolrRetrievalStrategist extends AbstractRetrievalStrategist {
+public class EnhancedSolrRetrievalStrategist extends
+		AbstractRetrievalStrategist {
 
 	private Integer hitListSize;
 
@@ -143,25 +144,13 @@ public class EnhancedSolrRetrievalStrategist extends AbstractRetrievalStrategist
 			List<Keyterm> keyterms) {
 		ArrayList<RetrievalResult> result = new ArrayList<RetrievalResult>();
 
-		// set smoothing parameters for Indri here
-		/*
-		 * String rule = ""; if (this.smoothing.startsWith("j")) rule =
-		 * "method:" + this.smoothing + "," + "collectionLambda:" +
-		 * this.smoothingLambda; if (this.smoothing.startsWith("d")) rule =
-		 * "method:" + this.smoothing + "," + "mu:" + this.smoothingMu; if
-		 * (this.smoothing.startsWith("t")) rule = "method:" + this.smoothing +
-		 * "," + "lambda:" + this.smoothingLambda + "," + "mu:" +
-		 * this.smoothingMu; String[] rules = { rule };
-		 */
-
 		try {
 
 			// set retrieval rules for Solr
 			SolrDocumentList docList = solrWrapper.runQuery(question,
 					hitListSize);
 
-			String[] docnos = new String[hitListSize];// wrapper.getQueryEnvironment().documentMetadata(sers,
-														// "docno");
+			String[] docnos = new String[hitListSize];
 			String[] docnos2 = new String[hitListSize];
 
 			for (int i = 0; i < docList.size(); i++) {
@@ -182,9 +171,6 @@ public class EnhancedSolrRetrievalStrategist extends AbstractRetrievalStrategist
 				SolrDocumentList list = solrWrapper.runQuery(backupQuery,
 						hitListSize - docnos.length);
 
-				// docnos2 =
-				// wrapper.getQueryEnvironment().documentMetadata(sers,
-				// "docno");
 				for (int j = 0; j < docnos2.length; j++) {
 					SolrDocument doc = list.get(j);
 					String docid = doc.getFieldValue("id").toString();
@@ -251,15 +237,7 @@ public class EnhancedSolrRetrievalStrategist extends AbstractRetrievalStrategist
 
 		QueryComponentContainer qc = refiner.getAllQueryComponents();
 
-		// System.out.println("All");
-		// qc.printOut();
-		// System.out.println(d"Concept");
-		// qc.printOutConceptPart();
-		// System.out.println("non-Concept");
-		// qc.printOutNotConceptPart();
-
 		String query = ""; // general query
-		// String mainPart = ""; // boolean-filter part
 
 		for (QueryComponent q : qc.getQueryComponent()) {
 
@@ -292,16 +270,10 @@ public class EnhancedSolrRetrievalStrategist extends AbstractRetrievalStrategist
 				query += "( " + keyterm + " ) ";
 			}
 
-			// query = query + " " + q.getWeight() + tempMain; // the general
-			// query
-
-			// if (q.isConcept())
-			// mainPart = mainPart + " " + tempMain; // content in
-			// boolean-filter
-
+				
 		}
 
-		System.out.println("#### Query: " + query);
+		//System.out.println("#### Query: " + query);
 		return query;
 	}
 
