@@ -18,7 +18,7 @@ package edu.cmu.lti.oaqa.openqa.test.team10.retrieval;
 
 import java.util.List;
 
-import util.PorterStemmer;
+import dragon.nlp.tool.PorterStemmer;
 import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
