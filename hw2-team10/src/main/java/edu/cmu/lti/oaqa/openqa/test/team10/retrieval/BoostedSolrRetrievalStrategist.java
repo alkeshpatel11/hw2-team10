@@ -18,10 +18,12 @@ package edu.cmu.lti.oaqa.openqa.test.team10.retrieval;
 
 import java.util.List;
 
+import util.PorterStemmer;
 import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
 import edu.cmu.lti.oaqa.openqa.test.team10.keyterm.SimilarNGramExtractor;
+
 
 /**
  * RS boosting phrase information
@@ -29,7 +31,7 @@ import edu.cmu.lti.oaqa.openqa.test.team10.keyterm.SimilarNGramExtractor;
  * @author Zeyuan Li <zeyuanl@cs.cmu.edu>
  * 
  */
-public class PhraseRetrievalStrategist extends SuperRetrievalStrategist {
+public class BoostedSolrRetrievalStrategist extends QueryRelaxationSolrRetrievalStrategist {
 
   @Override
   protected List<RetrievalResult> retrieveDocuments(String questionText, List<Keyterm> keyterms) {

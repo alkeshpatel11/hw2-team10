@@ -9,7 +9,6 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.uima.UimaContext;
 import org.apache.uima.resource.ResourceInitializationException;
 
-import edu.cmu.lti.oaqa.bio.retrieval.query.strategy.QueryGenerator;
 import edu.cmu.lti.oaqa.bio.retrieval.query.strategy.QueryStrategy;
 import edu.cmu.lti.oaqa.bio.retrieval.query.structure.QueryComponent;
 import edu.cmu.lti.oaqa.bio.retrieval.query.structure.QueryComponentContainer;
@@ -24,7 +23,7 @@ import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
  * 
  * @author alkeshku <alkeshku@andrew.cmu.edu>
  */
-public class SolrRetrievalStrategist extends AbstractRetrievalStrategist {
+public class EnhancedSolrRetrievalStrategist extends AbstractRetrievalStrategist {
 
 	private Integer hitListSize;
 

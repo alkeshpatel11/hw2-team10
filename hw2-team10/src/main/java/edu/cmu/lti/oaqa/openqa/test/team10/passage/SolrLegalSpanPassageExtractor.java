@@ -16,7 +16,7 @@ import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
 
-public class SolrBioPassageExtractor extends SimpleBioPassageExtractor {
+public class SolrLegalSpanPassageExtractor extends SimpleBioPassageExtractor {
 
 	private int passageListSize;
 	SolrWrapper solrWrapper;

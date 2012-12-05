@@ -27,6 +27,8 @@ import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.resource.ResourceInitializationException;
 
+import util.PorterStemmer;
+
 import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 import edu.cmu.lti.oaqa.core.provider.solr.SolrWrapper;
 import edu.cmu.lti.oaqa.cse.basephase.retrieval.AbstractRetrievalStrategist;
@@ -47,7 +49,7 @@ import edu.stanford.nlp.util.CoreMap;
  * @author Zeyuan Li <zeyuanl@cs.cmu.edu>
  * 
  */
-public class SuperRetrievalStrategist extends AbstractRetrievalStrategist {
+public class QueryRelaxationSolrRetrievalStrategist extends AbstractRetrievalStrategist {
 
 	protected Integer hitListSize;
 
