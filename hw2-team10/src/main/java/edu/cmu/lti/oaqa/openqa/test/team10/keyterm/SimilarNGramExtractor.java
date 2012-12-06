@@ -26,12 +26,16 @@ public class SimilarNGramExtractor extends AbstractKeytermExtractor {
 	public void initialize(UimaContext aContext)
 			throws ResourceInitializationException {
 		super.initialize(aContext);
+		try{
 		nSimilarGrams = (Integer) aContext.getConfigParameterValue(
 				"ngram-size", "10");
 		filterThreshold = (Double) aContext.getConfigParameterValue(
 				"ngram-score-threshold", "0.30");
 
 		nGramLuceneWrapper = new NGramLuceneWrapper();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	public ArrayList<GeneCount> getSynonyms(String term) throws Exception {
