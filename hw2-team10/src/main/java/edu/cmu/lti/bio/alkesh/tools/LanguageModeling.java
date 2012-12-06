@@ -53,8 +53,8 @@ public class LanguageModeling {
 
 		try {
 			LanguageModeling main = new LanguageModeling();
-			main.findSimilarity("What is the role of PrnP in mad cow disease",
-					"");
+			//main.findSimilarity("What is the role of PrnP in mad cow disease",
+					//"");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -71,7 +71,7 @@ public class LanguageModeling {
 
 		File files[] = new File(XMI_REPOSITORY).listFiles();
 
-		IndexingUtils indexUtils=new IndexingUtils(solrWrapper.getServer());
+		//IndexingUtils indexUtils=new IndexingUtils(solrWrapper.getServer());
 		XMLInputSource input = new XMLInputSource(TYPE_DESC_XML);
 		TypeSystemDescription typeDesc = UIMAFramework.getXMLParser()
 				.parseTypeSystemDescription(input);
@@ -120,12 +120,12 @@ public class LanguageModeling {
 			hshMap.put("text", docText);
 			hshMap.put("paragraph", paragraphs);
 			hshMap.put("timestamp", now);
-			SolrInputDocument solrDoc = indexUtils.makeSolrDocument(hshMap);
-			String docXML = ClientUtils.toXML(solrDoc);
-			indexUtils.indexDocument(docXML);
+			//SolrInputDocument solrDoc = indexUtils.makeSolrDocument(hshMap);
+			//String docXML = ClientUtils.toXML(solrDoc);
+			//indexUtils.indexDocument(docXML);
 			// System.out.println(docText);
 			// if (i % 50 == 0) {
-			solrWrapper.getServer().commit();
+			//solrWrapper.getServer().commit();
 			// Thread.sleep(1000);
 			// }
 
@@ -134,7 +134,7 @@ public class LanguageModeling {
 		}
 
 	}
-
+/*
 	public double findSimilarity1(String q, String p) throws Exception {
 
 		double similarity = 0.0;
@@ -183,5 +183,5 @@ public class LanguageModeling {
 
 		return similarity;
 	}
-
+*/
 }

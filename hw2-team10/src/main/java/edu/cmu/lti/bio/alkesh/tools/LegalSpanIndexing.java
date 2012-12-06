@@ -58,7 +58,7 @@ public class LegalSpanIndexing {
 	 * res.getString("uima.type.description"); this.SOLR_SERVER_URL =
 	 * res.getString("solr.server.url"); }
 	 */
-
+/*
 	public boolean isIndexed(String id, SolrWrapper solrWrapper)
 			throws Exception {
 
@@ -75,7 +75,7 @@ public class LegalSpanIndexing {
 		}
 
 	}
-
+*/
 	public File[] getDocumentIdsFromFile() throws Exception {
 		String filePath = "src/main/resources/gs/trecgen06.passage";
 		BufferedReader bfr = new BufferedReader(new FileReader(filePath));
@@ -260,7 +260,7 @@ public class LegalSpanIndexing {
 			}
 			System.out.println(count + " Legalspan added for " + id);
 			if (i % 100 == 0) {
-				solrWrapper.getServer().commit();
+				//solrWrapper.getServer().commit();
 			}
 			// System.out.println(i + " indexed with docno: " + id);
 		}
@@ -273,7 +273,7 @@ public class LegalSpanIndexing {
 		// System.out.println(xml);
 		DirectXmlRequest xmlreq = new DirectXmlRequest("/update", xml);
 		try {
-			solrWrapper.getServer().request(xmlreq);
+			//solrWrapper.getServer().request(xmlreq);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

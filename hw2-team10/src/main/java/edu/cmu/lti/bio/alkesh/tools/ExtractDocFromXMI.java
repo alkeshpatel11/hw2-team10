@@ -166,7 +166,7 @@ public class ExtractDocFromXMI {
 
 				// System.out.println(docText);
 				if (i % 500 == 0) {
-					main.solrWrapper.getServer().commit();
+					//main.solrWrapper.getServer().commit();
 					// Thread.sleep(1000);
 				}
 				// HashMap<String,String>param=new HashMap<String,String>();
@@ -176,7 +176,7 @@ public class ExtractDocFromXMI {
 				// System.out.println(((String)main.solrWrapper.getServer().query(params).getResults().get(0).getFieldValue("text")).length());
 				System.out.println(i + ". indexed with docno: " + id);
 			}
-			main.solrWrapper.getServer().commit();
+			//main.solrWrapper.getServer().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -192,7 +192,7 @@ public class ExtractDocFromXMI {
 		// System.out.println(xml);
 		DirectXmlRequest xmlreq = new DirectXmlRequest("/update", xml);
 		try {
-			solrWrapper.getServer().request(xmlreq);
+			//solrWrapper.getServer().request(xmlreq);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
