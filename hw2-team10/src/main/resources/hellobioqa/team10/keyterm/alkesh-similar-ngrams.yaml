@@ -1,0 +1,6 @@
+class: edu.cmu.lti.oaqa.openqa.test.team10.keyterm.SimilarNGramExtractor
+ngram-size: 10
+ngram-score-threshold: 0.30
+
+persistence-provider: |
+  inherit: ecd.default-log-persistence-provider

@@ -1,4 +1,4 @@
-class: edu.cmu.lti.oaqa.openqa.test.team10.passage.SolrBioPassageExtractor
+class: edu.cmu.lti.oaqa.openqa.test.team10.passage.SolrLegalSpanPassageExtractor
 server: http://peace.isri.cs.cmu.edu:9080/solr/genomics-legalspan/
 #solrserver: http://localhost:8983/solr/genomics-legalspan/
 #solrport: 8983

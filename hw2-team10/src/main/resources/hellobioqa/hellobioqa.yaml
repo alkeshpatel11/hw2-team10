@@ -24,16 +24,16 @@ pipeline:
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist
     options: |
-      - inherit: hellobioqa.retrieval.simple-solr-strategist
-      #- inherit: hellobioqa.retrieval.enhanced-solr-strategist
+      #- inherit: hellobioqa.retrieval.simple-solr-strategist
+      - inherit: hellobioqa.team10.retrieval.alkesh-synonyms-solr-strategist
       #- inherit: hellobioqa.retrieval.zeyuanl-solr-strategist
       #- inherit: hellobioqa.retrieval.zeyuanl-phrase-strategist
           
   - inherit: jdbc.sqlite.cse.phase  
     name: passage-extractor
     options: |
-      - inherit: hellobioqa.passage.simple
-      #- inherit: hellobioqa.passage.lucenepassage
+      #- inherit: hellobioqa.passage.simple
+      - inherit: hellobioqa.team10.passage.alkesh-solr-leganspan-passage
       #- inherit: hellobioqa.passage.solrpassage
       
   - inherit: helloqa.eval.keyterm-aggregator-consumer
