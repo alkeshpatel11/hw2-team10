@@ -17,11 +17,12 @@ pipeline:
       #- inherit: helloqa.keyterm.simple
       #- inherit: hellobioqa.team10.keyterm.bdutt-simple
       #- inherit: hellobioqa.team10.keyterm.alkesh-similar-ngrams
+      - inherit: hellobioqa.team10.keyterm.bdutt-enhancedGOSynonymExtractor
       #- inherit: hellobioqa.team10.keyterm.bdutt-geneontology-synonyms
       #- inherit: hellobioqa.team10.keyterm.alkesh-simple
       #- inherit: hellobioqa.team10.keyterm.yifeih-simple
       #- inherit: hellobioqa.team10.keyterm.zeyuanl-simple
-      - inherit: hellobioqa.keyterm.simple
+      #- inherit: hellobioqa.keyterm.simple
       
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist

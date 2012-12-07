@@ -1,6 +1,6 @@
 class: edu.cmu.lti.oaqa.openqa.test.team10.keyterm.EnhancedGOSynonymExtractor
 max_size: 10
-goFilePath: data/gene_ontology_ext.obo
+goFilePath: ./data/gene_ontology_ext.obo
 
 persistence-provider: |
   inherit: ecd.default-log-persistence-provider

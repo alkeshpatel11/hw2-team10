@@ -26,7 +26,7 @@ public class EnhancedGOSynonymExtractor extends AbstractKeytermExtractor {
    
     super.initialize(c);
     MAX_SIZE = (Integer)c.getConfigParameterValue("max_size");
-    GoFilePath = (String) c.getConfigParameterValue("goFilePath");
+    GoFilePath = (String) c.getConfigParameterValue("goFilePath","data/gene_ontology_ext.obo");
     nGramLuceneWrapper=new NGramLuceneWrapper();
   }
   
@@ -45,7 +45,7 @@ public class EnhancedGOSynonymExtractor extends AbstractKeytermExtractor {
     List<Keyterm> keyterms = new ArrayList<Keyterm>();  
     ArrayList<GeneCount> ngramReturn = new ArrayList<GeneCount>();
     ArrayList<GeneCount> ngramTotal = new  ArrayList<GeneCount>();
-    String[] ngramSynonyms = null;
+    ArrayList<String> ngramSynonyms = new ArrayList<String>();
     //Simply adding question terms to the list of keyterms
     for(int i=0; i<questionTokens.length;i++)
     {
@@ -77,9 +77,10 @@ public class EnhancedGOSynonymExtractor extends AbstractKeytermExtractor {
     int j=0;
     for(GeneCount gca: ngramTotal)
     {
-      ngramSynonyms[j++] = gca.getGeneName();
-      System.out.println("NGRAM =" + ngramSynonyms[j]);
+      ngramSynonyms.add(gca.getGeneName());
+      
     }
+    System.out.println("NGRAM =" + ngramSynonyms.toString());
     ArrayList<String> SynFromGO = findBestRelatedGenesFromGO(ngramSynonyms);
     
     
@@ -96,16 +97,16 @@ public class EnhancedGOSynonymExtractor extends AbstractKeytermExtractor {
     return keyterms;    
   }
 
-  private ArrayList<String> findBestRelatedGenesFromGO(String[] genes)
+  private ArrayList<String> findBestRelatedGenesFromGO(ArrayList<String> genes)
   {  
   ArrayList<String> geneListToSend = new ArrayList<String>();
   try {
-    OBOGraph graph = new OBOGraph(new FileReader(new File(GoFilePath)));
+			OBOGraph graph = new OBOGraph(new FileReader(new File(GoFilePath)));
         
-    for(int i=0; i<genes.length; i++)
+    for(int i=0; i<genes.size(); i++)
     {
       
-      ArrayList<OBONode> oboNodes = graph.search(genes[i]);
+      ArrayList<OBONode> oboNodes = graph.search(genes.get(i));
       for(OBONode o: oboNodes)
       {
                
@@ -124,6 +125,19 @@ public class EnhancedGOSynonymExtractor extends AbstractKeytermExtractor {
   return geneListToSend;
   }
   
+  public static void main(String args[]) {
+		try {
+			EnhancedGOSynonymExtractor extractor = new EnhancedGOSynonymExtractor();
+			List<Keyterm> list = extractor
+					.getKeyterms("beta-amyloid precursor");
+			for (int i = 0; i < list.size(); i++) {
+				System.out.println(list.get(i).getText());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
   
   
 }

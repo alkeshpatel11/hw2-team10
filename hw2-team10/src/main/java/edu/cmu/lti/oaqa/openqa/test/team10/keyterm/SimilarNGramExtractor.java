@@ -22,6 +22,10 @@ public class SimilarNGramExtractor extends AbstractKeytermExtractor {
 	float filterThreshold = 0.30f;
 	NGramLuceneWrapper nGramLuceneWrapper;
 
+	public SimilarNGramExtractor(){
+		nGramLuceneWrapper = new NGramLuceneWrapper();
+	}
+	
 	@Override
 	public void initialize(UimaContext aContext)
 			throws ResourceInitializationException {
