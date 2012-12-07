@@ -17,10 +17,9 @@ import org.apache.uima.resource.ResourceInitializationException;
 import edu.cmu.lti.bio.yifeih.types.*;
 import edu.cmu.lti.bio.yifeih.tools.*;
 /**
- * input: freshLine view. 
- * output: nounPhrases with rescored confidence in a new view,"allNouns"
+
  * This model will use Lingpipe hmm model to give confidence to phrases in the sentence
- * If the confidence is higher than some threhold, it will be added into "allNouns" views.
+ * If the confidence is higher than some threhold, it will be added into annotation lists
  *
  */
 public class GeneAnnotatorHmm extends JCasAnnotator_ImplBase {
