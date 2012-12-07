@@ -46,15 +46,16 @@ pipeline:
 
 post-process:
   - inherit: helloqa.eval.keyterm-evaluator-consumer
+  - inherit: report.csv-report-generator
+    builders: |
+      - inherit: helloqa.report.keyterm-report-component
   
   - inherit: internal.eval.cse-retrieval-evaluator-consumer
-  
   - inherit: report.csv-report-generator
     builders: |
       - inherit: internal.report.f-measure-report-component
       
   - inherit: internal.eval.cse-passage-map-evaluator-consumer
-  
   - inherit: report.csv-report-generator
     builders: |
       - inherit: internal.report.map-report-component
