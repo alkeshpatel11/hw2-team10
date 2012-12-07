@@ -19,21 +19,22 @@ import edu.cmu.lti.oaqa.framework.data.Keyterm;
 public class SimilarNGramExtractor extends AbstractKeytermExtractor {
 
 	int nSimilarGrams = 10;
-	double filterThreshold = 0.30;
+	float filterThreshold = 0.30f;
 	NGramLuceneWrapper nGramLuceneWrapper;
 
 	@Override
 	public void initialize(UimaContext aContext)
 			throws ResourceInitializationException {
 		super.initialize(aContext);
-		try{
-		nSimilarGrams = (Integer) aContext.getConfigParameterValue(
-				"ngram-size", "10");
-		filterThreshold = (Double) aContext.getConfigParameterValue(
-				"ngram-score-threshold", "0.30");
+		System.out.println("Reached here");
+		try {
+			nSimilarGrams = (Integer) aContext.getConfigParameterValue(
+					"ngram-size", "10");
+			filterThreshold = (Float) aContext.getConfigParameterValue(
+					"ngram-score-threshold", "0.30f");
 
-		nGramLuceneWrapper = new NGramLuceneWrapper();
-		}catch(Exception e){
+			nGramLuceneWrapper = new NGramLuceneWrapper();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

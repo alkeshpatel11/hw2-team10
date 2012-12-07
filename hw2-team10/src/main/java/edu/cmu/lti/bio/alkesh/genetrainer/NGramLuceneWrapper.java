@@ -31,12 +31,14 @@ import org.apache.lucene.util.Version;
 
 import edu.cmu.lti.bio.alkesh.customtypes.GeneCount;
 
+@SuppressWarnings("deprecation")
 public class NGramLuceneWrapper {
 
 	String NGRAM_FILE = "allGenes-sorted.txt";
 	String INDEX_DIRECTORY = "data/index";
 	
 
+	
 	public static void main(String args[]) {
 		try {
 			// String currDir=new File(".").getAbsolutePath();
@@ -124,7 +126,7 @@ public class NGramLuceneWrapper {
 	public ArrayList<GeneCount> searchIndex(String searchString,int n)
 			throws IOException, ParseException {
 
-		//System.out.println("Searching for '" + searchString + "'");
+		System.out.println("Searching for '" + searchString + "'");
 		Directory directory = FSDirectory.open(new File(INDEX_DIRECTORY));
 		IndexReader indexReader = IndexReader.open(directory);
 		IndexSearcher indexSearcher = new IndexSearcher(indexReader);

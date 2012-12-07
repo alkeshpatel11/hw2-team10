@@ -16,12 +16,12 @@ pipeline:
     options: |
       #- inherit: helloqa.keyterm.simple
       #- inherit: hellobioqa.team10.keyterm.bdutt-simple
-      - inherit: hellobioqa.team10.keyterm.alkesh-similar-ngrams
-      - inherit: hellobioqa.team10.keyterm.bdutt-geneontology-synonyms
+      #- inherit: hellobioqa.team10.keyterm.alkesh-similar-ngrams
+      #- inherit: hellobioqa.team10.keyterm.bdutt-geneontology-synonyms
       #- inherit: hellobioqa.team10.keyterm.alkesh-simple
       #- inherit: hellobioqa.team10.keyterm.yifeih-simple
       #- inherit: hellobioqa.team10.keyterm.zeyuanl-simple
-      #- inherit: hellobioqa.keyterm.simple
+      - inherit: hellobioqa.keyterm.simple
       
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist
@@ -41,15 +41,20 @@ pipeline:
   - inherit: helloqa.eval.keyterm-aggregator-consumer
 
   - inherit: internal.eval.cse-retrieval-aggregator-consumer
+  
   - inherit: internal.eval.cse-passage-map-aggregator-consumer
 
 post-process:
   - inherit: helloqa.eval.keyterm-evaluator-consumer
+  
   - inherit: internal.eval.cse-retrieval-evaluator-consumer
+  
   - inherit: report.csv-report-generator
     builders: |
       - inherit: internal.report.f-measure-report-component
+      
   - inherit: internal.eval.cse-passage-map-evaluator-consumer
+  
   - inherit: report.csv-report-generator
     builders: |
       - inherit: internal.report.map-report-component

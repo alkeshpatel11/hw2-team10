@@ -28,20 +28,7 @@ public class EnhancedSolrRetrievalStrategist extends
 
 	private Integer hitListSize;
 
-	private String smoothing;
-
-	private String smoothingMu;
-
-	private String smoothingLambda;
-
-	private String conceptTermWeight;
-
-	private String regularTermWeight;
-
-	private String verbTermWeight;
-
-	private String geneTermWeight;
-
+	
 	private String backupQuery;
 
 	private boolean useUMLS;
@@ -70,19 +57,6 @@ public class EnhancedSolrRetrievalStrategist extends
 		// Gets values from the yaml files
 		this.hitListSize = (Integer) aContext
 				.getConfigParameterValue("hit-list-size");
-		this.smoothing = (String) aContext.getConfigParameterValue("smoothing");
-		this.smoothingMu = (String) aContext
-				.getConfigParameterValue("smoothing-mu");
-		this.smoothingLambda = (String) aContext
-				.getConfigParameterValue("smoothing-lambda");
-		this.conceptTermWeight = (String) aContext
-				.getConfigParameterValue("concept-term-weight");
-		this.regularTermWeight = (String) aContext
-				.getConfigParameterValue("regular-term-weight");
-		this.verbTermWeight = (String) aContext
-				.getConfigParameterValue("verb-term-weight");
-		this.geneTermWeight = (String) aContext
-				.getConfigParameterValue("gene-term-weight");
 		this.useENTREZ = UimaContextHelper.getConfigParameterBooleanValue(
 				aContext, "ENTREZ", false);
 		this.useMESH = UimaContextHelper.getConfigParameterBooleanValue(
@@ -146,8 +120,13 @@ public class EnhancedSolrRetrievalStrategist extends
 
 		try {
 
+			String newquestion="";
+			for(int i=0;i<keyterms.size();i++){
+				newquestion+=keyterms.get(i).getText()+" ";
+			}
+			
 			// set retrieval rules for Solr
-			SolrDocumentList docList = solrWrapper.runQuery(question,
+			SolrDocumentList docList = solrWrapper.runQuery(newquestion,
 					hitListSize);
 
 			String[] docnos = new String[hitListSize];
