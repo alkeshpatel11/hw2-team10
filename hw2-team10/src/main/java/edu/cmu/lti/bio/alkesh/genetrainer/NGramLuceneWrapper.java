@@ -165,6 +165,8 @@ public class NGramLuceneWrapper {
 			//System.out.println(nGram + "\t" + freq + "\t" + score);
 			// System.out.println(doc.getFieldable("id")+"\t"+doc.getFieldable("ngram")+"\t"+score);
 		}
+		indexReader.close();
+		indexSearcher.close();
 		return result;
 	}
 
